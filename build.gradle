@@ -31,6 +31,8 @@ dependencies {
     /* custom items */
     compileOnly 'com.github.oraxen:oraxen:1.157.0'
     compileOnly 'com.github.LoneDev6:API-ItemsAdder:3.5.0b'
+
+    implementation 'org.jetbrains:annotations:24.1.0'
 }
 
 def targetJavaVersion = 17

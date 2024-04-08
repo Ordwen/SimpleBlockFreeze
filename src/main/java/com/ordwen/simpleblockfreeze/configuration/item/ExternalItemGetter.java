@@ -1,9 +1,10 @@
-package com.ordwen.simpleblockfreeze.tools.externals;
+package com.ordwen.simpleblockfreeze.configuration.item;
 
 import com.ordwen.simpleblockfreeze.tools.Pair;
 import dev.lone.itemsadder.api.CustomStack;
 import io.th0rgal.oraxen.api.OraxenItems;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class ExternalItemGetter implements IExternalItemGetter {
@@ -40,5 +41,26 @@ public abstract class ExternalItemGetter implements IExternalItemGetter {
         }
 
         return new Pair<>("", CustomStack.getInstance(namespace).getItemStack());
+    }
+
+    /**
+     * Add custom model data to an item.
+     * @param material the material of the item
+     * @param customModelData the custom model data of the item
+     * @return the ItemStack with the custom model data
+     */
+    @Override
+    public Pair<String, ItemStack> getCustomModelDataItem(Material material, int customModelData) {
+        final ItemStack item = new ItemStack(material);
+        final var itemMeta = item.getItemMeta();
+
+        if (itemMeta == null) {
+            return new Pair<>("Impossible to apply the custom model data.", null);
+        }
+
+        itemMeta.setCustomModelData(customModelData);
+        item.setItemMeta(itemMeta);
+
+        return new Pair<>("", item);
     }
 }

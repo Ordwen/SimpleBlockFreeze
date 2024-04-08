@@ -2,6 +2,7 @@ package com.ordwen.simpleblockfreeze.storage.sql;
 
 import com.ordwen.simpleblockfreeze.tools.PluginLogger;
 import com.zaxxer.hikari.HikariDataSource;
+import org.bukkit.entity.Player;
 
 import java.sql.*;
 
@@ -15,7 +16,7 @@ public abstract class SQLManager implements ISQLManager {
     public void setupTables() {
         final Connection connection = getConnection();
         try {
-            if (!tableExists(connection, "PLAYER")) {
+            if (!tableExists(connection, "SBF_LOCATIONS")) {
 
                 final String str = """
                         create table SBF_LOCATIONS
@@ -25,14 +26,15 @@ public abstract class SQLManager implements ISQLManager {
                              X decimal not null, \s
                              Y decimal not null,\s
                              Z decimal not null,\s
-                             constraint SBF_PK_LOCATIONS primary key (PLAYERNAME)
+                             constraint SBF_PK_LOCATIONS primary key (ID)
                           );""";
 
-                PreparedStatement preparedStatement = connection.prepareStatement(str);
+                final PreparedStatement preparedStatement = connection.prepareStatement(str);
                 preparedStatement.execute();
 
                 preparedStatement.close();
-                PluginLogger.info("Table 'Player' created in database.");
+                PluginLogger.info("Table 'SBF_LOCATIONS' created in database.");
+                connection.close();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -101,5 +103,31 @@ public abstract class SQLManager implements ISQLManager {
      */
     public boolean searchLocation(String world, double x, double y, double z) {
         return searchLocation.searchLocation(world, x, y, z);
+    }
+
+    /**
+     * Save a block location in database.
+     *
+     * @param player involved player.
+     * @param world  world name.
+     * @param x      x coordinate.
+     * @param y      y coordinate.
+     * @param z      z coordinate.
+     */
+    public void saveLocation(Player player, String world, double x, double y, double z) {
+        manageLocation.saveLocation(player, world, x, y, z);
+    }
+
+    /**
+     * Remove a block location from database.
+     *
+     * @param player involved player.
+     * @param world  world name.
+     * @param x      x coordinate.
+     * @param y      y coordinate.
+     * @param z      z coordinate.
+     */
+    public void deleteLocation(Player player, String world, double x, double y, double z) {
+        manageLocation.deleteLocation(player, world, x, y, z);
     }
 }

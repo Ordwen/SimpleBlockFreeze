@@ -1,12 +1,12 @@
-package com.ordwen.simpleblockfreeze;
+package com.ordwen.simpleblockfreeze.enums;
 
 import com.ordwen.simpleblockfreeze.tools.ColorConvert;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public enum Messages {
 
-    NO_PERMISSION("no_permission", "&cYou don't have permission."),
-    NO_PERMISSION_CATEGORY("no_permission_category", "&cYou don't have permission to see this category."),
+    COMMAND_NO_PERMISSION("no_permission", "&cYou don't have permission."),
+    ITEM_NO_PERMISSION("item_no_permission", "&cYou don't have permission to use this item."),
     PLAYER_ONLY("player_only", "&cOnly player can execute this command."),
 
     FREEZE_SUCCESS("freeze_success", "&aBlock successfully frozen."),
@@ -14,6 +14,10 @@ public enum Messages {
     ALREADY_FROZEN("already_frozen", "&cThis block is already frozen."),
     FREEZE_NOT_FOUND("freeze_not_found", "&cThis block is not frozen."),
     ERROR_OCCURRED("error_occurred", "&cAn error occurred. Please contact a server administrator."),
+    ADMIN_HELP("admin_help", "&cUsage: /sbfa give <player>"),
+    PLAYER_NOT_FOUND("player_not_found", "&cPlayer not found."),
+
+    ITEM_GIVEN("item_given", "&aFreeze item given to {player}."),
     ;
 
     private final String path;

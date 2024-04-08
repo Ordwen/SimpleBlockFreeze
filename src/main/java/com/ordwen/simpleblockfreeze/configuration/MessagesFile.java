@@ -1,6 +1,6 @@
 package com.ordwen.simpleblockfreeze.configuration;
 
-import com.ordwen.simpleblockfreeze.Messages;
+import com.ordwen.simpleblockfreeze.enums.Messages;
 import com.ordwen.simpleblockfreeze.SimpleBlockFreeze;
 import com.ordwen.simpleblockfreeze.tools.PluginLogger;
 import org.bukkit.configuration.InvalidConfigurationException;

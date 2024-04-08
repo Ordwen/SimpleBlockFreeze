@@ -1,6 +1,10 @@
 package com.ordwen.simpleblockfreeze;
 
+import com.ordwen.simpleblockfreeze.commands.AdminCommand;
+import com.ordwen.simpleblockfreeze.configuration.Configuration;
 import com.ordwen.simpleblockfreeze.configuration.MessagesFile;
+import com.ordwen.simpleblockfreeze.events.BlockStateChangeListener;
+import com.ordwen.simpleblockfreeze.events.PlayerInteractListener;
 import com.ordwen.simpleblockfreeze.storage.sql.SQLManager;
 import com.ordwen.simpleblockfreeze.storage.sql.h2.H2Manager;
 import com.ordwen.simpleblockfreeze.storage.sql.mysql.MySQLManager;
@@ -11,8 +15,6 @@ public final class SimpleBlockFreeze extends JavaPlugin {
 
     public static SimpleBlockFreeze INSTANCE;
 
-    private SQLManager sqlManager;
-
     @Override
     public void onEnable() {
         PluginLogger.info("Plugin is starting...");
@@ -21,31 +23,19 @@ public final class SimpleBlockFreeze extends JavaPlugin {
         /* init files */
         new MessagesFile(this).loadMessagesFiles();
 
-        /* init storage */
-        final String storageMode = getConfig().getString("storage_mode");
-        if (storageMode == null) {
-            PluginLogger.error("Storage mode not found in config.yml.");
-            throw new RuntimeException("Storage mode not found in config.yml.");
-        }
+        /* load config */
+        new Configuration(this).load();
 
-        if (storageMode.equalsIgnoreCase("mysql")) {
-            PluginLogger.info("MySQL storage mode enabled.");
-            sqlManager = new MySQLManager(this);
-        } else if (storageMode.equalsIgnoreCase("h2")) {
-            PluginLogger.info("H2 storage mode enabled.");
-            sqlManager = new H2Manager();
-        } else {
-            PluginLogger.error("Invalid storage mode in config.yml.");
-            throw new RuntimeException("Invalid storage mode in config.yml.");
-        }
+        /* register commands */
+        getCommand("sbfadmin").setExecutor(new AdminCommand());
+
+        /* register events */
+        getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
+        getServer().getPluginManager().registerEvents(new BlockStateChangeListener(), this);
     }
 
     @Override
     public void onDisable() {
         PluginLogger.info("Plugin is stopping...");
-    }
-
-    public SQLManager getSqlManager() {
-        return sqlManager;
     }
 }
