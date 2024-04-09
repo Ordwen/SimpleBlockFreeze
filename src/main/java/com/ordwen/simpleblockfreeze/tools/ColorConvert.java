@@ -7,6 +7,10 @@ import java.util.regex.Pattern;
 
 public class ColorConvert {
 
+    private ColorConvert() {
+        throw new IllegalStateException("Utility class");
+    }
+
     private static final Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
 
     public static String convertColorCode(String msg) {

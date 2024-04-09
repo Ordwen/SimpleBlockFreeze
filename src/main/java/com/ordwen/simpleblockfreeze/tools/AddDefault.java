@@ -25,7 +25,8 @@ public class AddDefault {
         try {
             fileConfiguration.save(file);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            PluginLogger.error("An error occurred while saving the configuration file.");
+            PluginLogger.error(e.getMessage());
         }
     }
 }

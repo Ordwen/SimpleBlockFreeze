@@ -109,7 +109,8 @@ public class ManageLocation {
             playerStatement.executeUpdate();
             playerStatement.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            PluginLogger.error("An error occurred while preparing the database statement.");
+            PluginLogger.error(e.getMessage());
         }
     }
 }

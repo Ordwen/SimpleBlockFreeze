@@ -37,7 +37,8 @@ public abstract class SQLManager implements ISQLManager {
                 connection.close();
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            PluginLogger.error("An error occurred while creating the table 'SBF_LOCATIONS'.");
+            PluginLogger.error(e.getMessage());
         }
     }
 
@@ -73,6 +74,7 @@ public abstract class SQLManager implements ISQLManager {
             try {
                 return this.hikariDataSource.getConnection();
             } catch (SQLException e) {
+                PluginLogger.error("An error occurred while getting a connection to the database.");
                 PluginLogger.error(e.getMessage());
             }
         }

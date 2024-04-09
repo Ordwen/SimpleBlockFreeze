@@ -47,7 +47,7 @@ public class MySQLManager extends SQLManager {
         final ConfigurationSection section = config.getConfigurationSection("database");
         if (section == null) {
             PluginLogger.error("Database section not found in config.yml.");
-            throw new RuntimeException("Database section not found in config.yml.");
+            throw new IllegalArgumentException("Database section not found in config.yml.");
         }
 
         host = section.getString("host");

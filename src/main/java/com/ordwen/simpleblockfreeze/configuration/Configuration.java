@@ -53,13 +53,13 @@ public class Configuration {
         final ConfigurationSection itemSection = config.getConfigurationSection("item");
         if (itemSection == null) {
             PluginLogger.error("Item section not found in config.yml.");
-            throw new RuntimeException("Item section not found in config.yml.");
+            throw new IllegalArgumentException("Item section not found in config.yml.");
         }
 
         final String material = itemSection.getString("material");
         if (material == null) {
             PluginLogger.error("Material not found in item section in config.yml.");
-            throw new RuntimeException("Material not found in item section in config.yml.");
+            throw new IllegalArgumentException("Material not found in item section in config.yml.");
         }
         item = new ItemGetter().getItemStackFromMaterial(material, "material");
 
@@ -83,7 +83,7 @@ public class Configuration {
         final String storageMode = config.getString("storage_mode");
         if (storageMode == null) {
             PluginLogger.error("Storage mode not found in config.yml.");
-            throw new RuntimeException("Storage mode not found in config.yml.");
+            throw new IllegalArgumentException("Storage mode not found in config.yml.");
         }
 
         if (storageMode.equalsIgnoreCase("mysql")) {
@@ -94,7 +94,7 @@ public class Configuration {
             sqlManager = new H2Manager();
         } else {
             PluginLogger.error("Invalid storage mode in config.yml.");
-            throw new RuntimeException("Invalid storage mode in config.yml.");
+            throw new IllegalArgumentException("Invalid storage mode in config.yml.");
         }
     }
 

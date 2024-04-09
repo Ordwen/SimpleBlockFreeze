@@ -24,7 +24,8 @@ public class AutoUpdater {
         try {
             configFile.load(file);
         } catch (IOException | InvalidConfigurationException e) {
-            throw new RuntimeException(e);
+            PluginLogger.error("An error occurred while loading the config file.");
+            PluginLogger.error(e.getMessage());
         }
 
         final FileConfiguration playerInterfaceFile = new YamlConfiguration();
@@ -33,7 +34,8 @@ public class AutoUpdater {
         try {
             playerInterfaceFile.load(playerInterface);
         } catch (IOException | InvalidConfigurationException e) {
-            throw new RuntimeException(e);
+            PluginLogger.error("An error occurred while loading the playerInterface file.");
+            PluginLogger.error(e.getMessage());
         }
 
         final String currentVersion = plugin.getDescription().getVersion();
@@ -54,7 +56,8 @@ public class AutoUpdater {
         try {
             configFile.save(file);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            PluginLogger.error("An error occurred while saving the config file.");
+            PluginLogger.error(e.getMessage());
         }
     }
 }
