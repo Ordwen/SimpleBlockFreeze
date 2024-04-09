@@ -38,13 +38,12 @@ public class ManageLocation {
         }
 
         final Connection connection = sqlManager.getConnection();
-        try {
+        try (connection) {
             final String SAVE_QUERY = "INSERT INTO SBF_LOCATIONS(WORLD_NAME, X, Y, Z) VALUES (?, ?, ?, ?)";
-            getStatement(world, x, y, z, connection, SAVE_QUERY);
+            runStatement(world, x, y, z, connection, SAVE_QUERY);
 
             final String msg = Messages.FREEZE_SUCCESS.toString();
             if (!msg.isEmpty()) player.sendMessage(msg);
-            connection.close();
         } catch (SQLException e) {
             PluginLogger.error("An error occurred while saving a block location in the database.");
             PluginLogger.error(e.getMessage());
@@ -70,13 +69,12 @@ public class ManageLocation {
         }
 
         final Connection connection = sqlManager.getConnection();
-        try {
+        try (connection) {
             final String DELETE_QUERY = "DELETE FROM SBF_LOCATIONS WHERE WORLD_NAME = ? AND X = ? AND Y = ? AND Z = ?";
-            getStatement(world, x, y, z, connection, DELETE_QUERY);
+            runStatement(world, x, y, z, connection, DELETE_QUERY);
 
             final String msg = Messages.UNFREEZE_SUCCESS.toString();
             if (!msg.isEmpty()) player.sendMessage(msg);
-            connection.close();
         } catch (SQLException e) {
             PluginLogger.error("An error occurred while deleting a block location in the database.");
             PluginLogger.error(e.getMessage());
@@ -96,7 +94,7 @@ public class ManageLocation {
      * @param connection connection to database.
      * @param saveQuery  query to save location.
      */
-    private void getStatement(String world, double x, double y, double z, Connection connection, String saveQuery) {
+    private void runStatement(String world, double x, double y, double z, Connection connection, String saveQuery) {
         final PreparedStatement playerStatement;
         try (connection) {
             playerStatement = connection.prepareStatement(saveQuery);

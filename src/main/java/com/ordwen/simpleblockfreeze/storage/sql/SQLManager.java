@@ -15,7 +15,7 @@ public abstract class SQLManager implements ISQLManager {
 
     public void setupTables() {
         final Connection connection = getConnection();
-        try {
+        try (connection) {
             if (!tableExists(connection, "SBF_LOCATIONS")) {
 
                 final String str = """
@@ -34,7 +34,6 @@ public abstract class SQLManager implements ISQLManager {
 
                 preparedStatement.close();
                 PluginLogger.info("Table 'SBF_LOCATIONS' created in database.");
-                connection.close();
             }
         } catch (SQLException e) {
             PluginLogger.error("An error occurred while creating the table 'SBF_LOCATIONS'.");
