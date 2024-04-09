@@ -61,6 +61,17 @@ public class Configuration {
             PluginLogger.error("Material not found in item section in config.yml.");
             throw new IllegalArgumentException("Material not found in item section in config.yml.");
         }
+
+        setItem(material, itemSection);
+    }
+
+    /**
+     * Set the item used to freeze blocks.
+     *
+     * @param material    material of the item
+     * @param itemSection item section of the configuration file
+     */
+    private static void setItem(String material, ConfigurationSection itemSection) {
         item = new ItemGetter().getItemStackFromMaterial(material, "material");
 
         final ItemMeta itemMeta = item.getItemMeta();
@@ -88,14 +99,23 @@ public class Configuration {
 
         if (storageMode.equalsIgnoreCase("mysql")) {
             PluginLogger.info("MySQL storage mode enabled.");
-            sqlManager = new MySQLManager(plugin);
+            setSQLManager(new MySQLManager(plugin));
         } else if (storageMode.equalsIgnoreCase("h2")) {
             PluginLogger.info("H2 storage mode enabled.");
-            sqlManager = new H2Manager();
+            setSQLManager(new H2Manager());
         } else {
             PluginLogger.error("Invalid storage mode in config.yml.");
             throw new IllegalArgumentException("Invalid storage mode in config.yml.");
         }
+    }
+
+    /**
+     * Set the SQL manager.
+     *
+     * @param manager SQLManager instance
+     */
+    private static void setSQLManager(SQLManager manager) {
+        sqlManager = manager;
     }
 
     /**
@@ -110,27 +130,35 @@ public class Configuration {
                 PluginLogger.warn("WorldGuard features will be disabled.");
                 return;
             }
-            wgPlatform = WorldGuard.getInstance().getPlatform();
-            isWorldGuardEnabled = true;
+            setWorldGuardPlatform(WorldGuard.getInstance().getPlatform());
+            setWorldGuardEnabled();
         }
     }
 
     /**
-     * Get the item used to freeze blocks.
-     * @return an ItemStack
+     * Set the WorldGuard platform.
+     *
+     * @param platform WorldGuardPlatform instance
      */
-    public static ItemStack getItem() {
-        return item;
+    private static void setWorldGuardPlatform(WorldGuardPlatform platform) {
+        wgPlatform = platform;
     }
 
     /**
-     * Get the SQL manager.
-     * @return the SQL manager
+     * Set WorldGuard enabled.
      */
-    public static SQLManager getSQLManager() {
-        return sqlManager;
+    private static void setWorldGuardEnabled() {
+        isWorldGuardEnabled = true;
     }
 
+    /**
+     * Check if the player can build at the location using WorldGuard.
+     *
+     * @param player   the player
+     * @param world    the world
+     * @param location the location
+     * @return true if the player can build, false otherwise
+     */
     public static boolean canBuild(Player player, World world, Location location) {
         if (!isWorldGuardEnabled) return true;
 
@@ -142,5 +170,23 @@ public class Configuration {
 
         final RegionQuery query = wgPlatform.getRegionContainer().createQuery();
         return query.testBuild(adaptedLocation, localPlayer, Flags.BUILD);
+    }
+
+    /**
+     * Get the item used to freeze blocks.
+     *
+     * @return an ItemStack
+     */
+    public static ItemStack getItem() {
+        return item;
+    }
+
+    /**
+     * Get the SQL manager.
+     *
+     * @return the SQL manager
+     */
+    public static SQLManager getSQLManager() {
+        return sqlManager;
     }
 }

@@ -7,6 +7,10 @@ import java.io.IOException;
 
 public class AddDefault {
 
+    private AddDefault() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * Add a default parameter in a file if it is missing.
      *
