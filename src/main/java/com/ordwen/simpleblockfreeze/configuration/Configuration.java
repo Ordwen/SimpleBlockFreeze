@@ -7,8 +7,18 @@ import com.ordwen.simpleblockfreeze.storage.sql.h2.H2Manager;
 import com.ordwen.simpleblockfreeze.storage.sql.mysql.MySQLManager;
 import com.ordwen.simpleblockfreeze.tools.ColorConvert;
 import com.ordwen.simpleblockfreeze.tools.PluginLogger;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.LocalPlayer;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.internal.platform.WorldGuardPlatform;
+import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.regions.RegionQuery;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -18,6 +28,8 @@ public class Configuration {
 
     private static ItemStack item;
     private static SQLManager sqlManager;
+    private static boolean isWorldGuardEnabled;
+    private static WorldGuardPlatform wgPlatform = null;
 
     private final SimpleBlockFreeze plugin;
     private final FileConfiguration config;
@@ -31,6 +43,7 @@ public class Configuration {
         plugin.saveDefaultConfig();
         loadItem();
         loadSQLManager();
+        loadWorldGuard();
     }
 
     /**
@@ -60,12 +73,13 @@ public class Configuration {
         if (!lore.isEmpty()) lore.replaceAll(ColorConvert::convertColorCode);
 
         itemMeta.setLore(lore);
+        item.setItemMeta(itemMeta);
     }
 
     /**
      * Initialize the storage manager depending on the storage mode.
      */
-    public void loadSQLManager() {
+    private void loadSQLManager() {
         final String storageMode = config.getString("storage_mode");
         if (storageMode == null) {
             PluginLogger.error("Storage mode not found in config.yml.");
@@ -85,6 +99,23 @@ public class Configuration {
     }
 
     /**
+     * Load WorldGuard if enabled in the configuration file.
+     */
+    private void loadWorldGuard() {
+        final boolean enabled = config.getBoolean("use_worldguard");
+        if (enabled) {
+            boolean isWorldGuardLoaded = plugin.getServer().getPluginManager().getPlugin("WorldGuard") != null;
+            if (!isWorldGuardLoaded) {
+                PluginLogger.warn("WorldGuard is not loaded but use_worldguard is enabled in config.yml.");
+                PluginLogger.warn("WorldGuard features will be disabled.");
+                return;
+            }
+            wgPlatform = WorldGuard.getInstance().getPlatform();
+            isWorldGuardEnabled = true;
+        }
+    }
+
+    /**
      * Get the item used to freeze blocks.
      * @return an ItemStack
      */
@@ -98,5 +129,18 @@ public class Configuration {
      */
     public static SQLManager getSQLManager() {
         return sqlManager;
+    }
+
+    public static boolean canBuild(Player player, World world, Location location) {
+        if (!isWorldGuardEnabled) return true;
+
+        final com.sk89q.worldedit.util.Location adaptedLocation = BukkitAdapter.adapt(location);
+        final com.sk89q.worldedit.world.World adaptedWorld = BukkitAdapter.adapt(world);
+        final LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
+
+        if (wgPlatform.getSessionManager().hasBypass(localPlayer, adaptedWorld)) return true;
+
+        final RegionQuery query = wgPlatform.getRegionContainer().createQuery();
+        return query.testBuild(adaptedLocation, localPlayer, Flags.BUILD);
     }
 }

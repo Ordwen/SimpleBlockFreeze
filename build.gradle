@@ -19,6 +19,10 @@ repositories {
         name = 'jitpack-repo'
         url = 'https://jitpack.io'
     }
+    maven {
+        name = 'enginehub-repo'
+        url = "https://maven.enginehub.org/repo/"
+    }
 }
 
 dependencies {
@@ -31,6 +35,8 @@ dependencies {
     /* custom items */
     compileOnly 'com.github.oraxen:oraxen:1.157.0'
     compileOnly 'com.github.LoneDev6:API-ItemsAdder:3.5.0b'
+
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.9'
 
     implementation 'org.jetbrains:annotations:24.1.0'
 }

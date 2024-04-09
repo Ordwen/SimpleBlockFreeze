@@ -3,11 +3,8 @@ package com.ordwen.simpleblockfreeze;
 import com.ordwen.simpleblockfreeze.commands.AdminCommand;
 import com.ordwen.simpleblockfreeze.configuration.Configuration;
 import com.ordwen.simpleblockfreeze.configuration.MessagesFile;
-import com.ordwen.simpleblockfreeze.events.BlockStateChangeListener;
+import com.ordwen.simpleblockfreeze.events.BlockChangeListeners;
 import com.ordwen.simpleblockfreeze.events.PlayerInteractListener;
-import com.ordwen.simpleblockfreeze.storage.sql.SQLManager;
-import com.ordwen.simpleblockfreeze.storage.sql.h2.H2Manager;
-import com.ordwen.simpleblockfreeze.storage.sql.mysql.MySQLManager;
 import com.ordwen.simpleblockfreeze.tools.PluginLogger;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -31,7 +28,7 @@ public final class SimpleBlockFreeze extends JavaPlugin {
 
         /* register events */
         getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
-        getServer().getPluginManager().registerEvents(new BlockStateChangeListener(), this);
+        getServer().getPluginManager().registerEvents(new BlockChangeListeners(), this);
     }
 
     @Override

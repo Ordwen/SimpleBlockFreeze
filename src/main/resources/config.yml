@@ -21,3 +21,6 @@ item:
       - "&7Freeze the block."
       - "&7Right click to freeze."
       - "&7Left click to unfreeze."
+
+# If enabled, the player will not be able to use the block freezer in a worldguard region.
+use_worldguard: false

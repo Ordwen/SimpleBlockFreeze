@@ -16,6 +16,7 @@ public enum Messages {
     ERROR_OCCURRED("error_occurred", "&cAn error occurred. Please contact a server administrator."),
     ADMIN_HELP("admin_help", "&cUsage: /sbfa give <player>"),
     PLAYER_NOT_FOUND("player_not_found", "&cPlayer not found."),
+    UNAUTHORIZED_REGION("unauthorized_region", "&cYou can't freeze blocks in this region."),
 
     ITEM_GIVEN("item_given", "&aFreeze item given to {player}."),
     ;

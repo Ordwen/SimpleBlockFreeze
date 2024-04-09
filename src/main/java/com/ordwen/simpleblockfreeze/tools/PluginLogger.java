@@ -4,7 +4,7 @@ import java.util.logging.Logger;
 
 public class PluginLogger {
 
-    private static final Logger logger = org.bukkit.plugin.PluginLogger.getLogger("O'DailyQuests");
+    private static final Logger logger = org.bukkit.plugin.PluginLogger.getLogger("SimpleBlockFreeze");
 
     public static void info(String msg) {
         logger.info(msg);
