@@ -95,17 +95,13 @@ public class ManageLocation {
      * @param saveQuery  query to save location.
      */
     private void runStatement(String world, double x, double y, double z, Connection connection, String saveQuery) {
-        final PreparedStatement playerStatement;
-        try (connection) {
-            playerStatement = connection.prepareStatement(saveQuery);
-
+        try (final PreparedStatement playerStatement = connection.prepareStatement(saveQuery)) {
             playerStatement.setString(1, world);
             playerStatement.setDouble(2, x);
             playerStatement.setDouble(3, y);
             playerStatement.setDouble(4, z);
 
             playerStatement.executeUpdate();
-            playerStatement.close();
         } catch (SQLException e) {
             PluginLogger.error("An error occurred while preparing the database statement.");
             PluginLogger.error(e.getMessage());

@@ -29,11 +29,10 @@ public abstract class SQLManager implements ISQLManager {
                              constraint SBF_PK_LOCATIONS primary key (ID)
                           );""";
 
-                final PreparedStatement preparedStatement = connection.prepareStatement(str);
-                preparedStatement.execute();
-
-                preparedStatement.close();
-                PluginLogger.info("Table 'SBF_LOCATIONS' created in database.");
+                try (final PreparedStatement preparedStatement = connection.prepareStatement(str)) {
+                    preparedStatement.execute();
+                    PluginLogger.info("Table 'SBF_LOCATIONS' created in database.");
+                }
             }
         } catch (SQLException e) {
             PluginLogger.error("An error occurred while creating the table 'SBF_LOCATIONS'.");
