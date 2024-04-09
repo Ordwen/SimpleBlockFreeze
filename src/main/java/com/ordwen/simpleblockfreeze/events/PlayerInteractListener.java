@@ -33,7 +33,7 @@ public class PlayerInteractListener implements Listener {
         final Player player = event.getPlayer();
         if (!player.hasPermission(Permissions.USE.toString())) {
             final String msg = Messages.ITEM_NO_PERMISSION.toString();
-            if (msg != null) player.sendMessage(msg);
+            if (!msg.isEmpty()) player.sendMessage(msg);
             return;
         }
 
@@ -46,7 +46,7 @@ public class PlayerInteractListener implements Listener {
 
         if (!Configuration.canBuild(player, world, location)) {
             final String msg = Messages.UNAUTHORIZED_REGION.toString();
-            if (msg != null) player.sendMessage(msg);
+            if (!msg.isEmpty()) player.sendMessage(msg);
             return;
         }
 

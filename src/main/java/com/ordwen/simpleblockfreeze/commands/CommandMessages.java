@@ -12,7 +12,7 @@ public abstract class CommandMessages {
      */
     protected void help(CommandSender sender) {
         final String msg = Messages.ADMIN_HELP.toString();
-        if (msg != null) sender.sendMessage(msg);
+        if (!msg.isEmpty()) sender.sendMessage(msg);
     }
 
     /**
@@ -22,7 +22,7 @@ public abstract class CommandMessages {
      */
     protected void noPermission(CommandSender sender) {
         final String msg = Messages.COMMAND_NO_PERMISSION.toString();
-        if (msg != null) sender.sendMessage(msg);
+        if (!msg.isEmpty()) sender.sendMessage(msg);
     }
 
     /**
@@ -32,6 +32,6 @@ public abstract class CommandMessages {
      */
     protected void playerOnly(CommandSender sender) {
         final String msg = Messages.PLAYER_ONLY.toString();
-        if (msg != null) sender.sendMessage(msg);
+        if (!msg.isEmpty()) sender.sendMessage(msg);
     }
 }

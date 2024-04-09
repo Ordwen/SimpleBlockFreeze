@@ -33,7 +33,7 @@ public class ManageLocation {
     public void saveLocation(Player player, String world, double x, double y, double z) {
         if (sqlManager.searchLocation(world, x, y, z)) {
             final String msg = Messages.ALREADY_FROZEN.toString();
-            if (msg != null) player.sendMessage(msg);
+            if (!msg.isEmpty()) player.sendMessage(msg);
             return;
         }
 
@@ -43,14 +43,14 @@ public class ManageLocation {
             getStatement(world, x, y, z, connection, SAVE_QUERY);
 
             final String msg = Messages.FREEZE_SUCCESS.toString();
-            if (msg != null) player.sendMessage(msg);
+            if (!msg.isEmpty()) player.sendMessage(msg);
             connection.close();
         } catch (SQLException e) {
             PluginLogger.error("An error occurred while saving a block location in the database.");
             PluginLogger.error(e.getMessage());
 
             final String msg = Messages.ERROR_OCCURRED.toString();
-            if (msg != null) player.sendMessage(msg);
+            if (!msg.isEmpty()) player.sendMessage(msg);
         }
     }
 
@@ -65,7 +65,7 @@ public class ManageLocation {
     public void deleteLocation(Player player, String world, double x, double y, double z) {
         if (!sqlManager.searchLocation(world, x, y, z)) {
             final String msg = Messages.FREEZE_NOT_FOUND.toString();
-            if (msg != null) player.sendMessage(msg);
+            if (!msg.isEmpty()) player.sendMessage(msg);
             return;
         }
 
@@ -75,14 +75,14 @@ public class ManageLocation {
             getStatement(world, x, y, z, connection, DELETE_QUERY);
 
             final String msg = Messages.UNFREEZE_SUCCESS.toString();
-            if (msg != null) player.sendMessage(msg);
+            if (!msg.isEmpty()) player.sendMessage(msg);
             connection.close();
         } catch (SQLException e) {
             PluginLogger.error("An error occurred while deleting a block location in the database.");
             PluginLogger.error(e.getMessage());
 
             final String msg = Messages.ERROR_OCCURRED.toString();
-            if (msg != null) player.sendMessage(msg);
+            if (!msg.isEmpty()) player.sendMessage(msg);
         }
     }
 

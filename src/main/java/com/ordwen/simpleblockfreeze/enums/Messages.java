@@ -53,7 +53,7 @@ public enum Messages {
     public String toString() {
         String msg = LANG.getString(this.path, defaultMessage);
 
-        if (msg.trim().isEmpty()) return null;
+        if (msg.trim().isEmpty()) return "";
         else return ColorConvert.convertColorCode(msg);
     }
 

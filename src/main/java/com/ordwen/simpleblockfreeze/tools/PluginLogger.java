@@ -4,6 +4,10 @@ import java.util.logging.Logger;
 
 public class PluginLogger {
 
+    private PluginLogger() {
+        throw new IllegalStateException("Utility class");
+    }
+
     private static final Logger logger = org.bukkit.plugin.PluginLogger.getLogger("SimpleBlockFreeze");
 
     public static void info(String msg) {

@@ -28,13 +28,13 @@ public class AdminCommand extends CommandMessages implements CommandExecutor {
             final Player target = Bukkit.getPlayer(args[1]);
             if (target == null) {
                 final String msg = Messages.PLAYER_NOT_FOUND.toString();
-                if (msg != null) sender.sendMessage(msg);
+                if (!msg.isEmpty()) sender.sendMessage(msg);
                 return true;
             }
 
             target.getInventory().addItem(Configuration.getItem());
             final String msg = Messages.ITEM_GIVEN.toString();
-            if (msg != null) sender.sendMessage(msg.replace("{player}", target.getName()));
+            if (!msg.isEmpty()) sender.sendMessage(msg.replace("{player}", target.getName()));
             return true;
         }
 
