@@ -10,12 +10,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class SimpleBlockFreeze extends JavaPlugin {
 
-    public static SimpleBlockFreeze INSTANCE;
+    private static SimpleBlockFreeze INSTANCE;
 
     @Override
     public void onEnable() {
         PluginLogger.info("Plugin is starting...");
-        INSTANCE = this;
+        SimpleBlockFreeze.setInstance(this);
 
         /* init files */
         new MessagesFile(this).loadMessagesFiles();
@@ -34,5 +34,23 @@ public final class SimpleBlockFreeze extends JavaPlugin {
     @Override
     public void onDisable() {
         PluginLogger.info("Plugin is stopping...");
+    }
+
+    /**
+     * Set the instance of the plugin.
+     *
+     * @param instance instance of the plugin
+     */
+    public static void setInstance(SimpleBlockFreeze instance) {
+        INSTANCE = instance;
+    }
+
+    /**
+     * Get the instance of the plugin.
+     *
+     * @return SimpleBlockFreeze instance
+     */
+    public static SimpleBlockFreeze getInstance() {
+        return INSTANCE;
     }
 }
