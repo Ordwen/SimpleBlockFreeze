@@ -23,7 +23,7 @@ public enum Messages {
 
     private final String path;
     private final String defaultMessage;
-    private static FileConfiguration LANG;
+    private static FileConfiguration lang;
 
     /**
      * Message constructor.
@@ -41,7 +41,7 @@ public enum Messages {
      * @param messagesFile the config to set.
      */
     public static void setFile(FileConfiguration messagesFile) {
-        LANG = messagesFile;
+        lang = messagesFile;
     }
 
     /**
@@ -51,7 +51,7 @@ public enum Messages {
      */
     @Override
     public String toString() {
-        String msg = LANG.getString(this.path, defaultMessage);
+        String msg = lang.getString(this.path, defaultMessage);
 
         if (msg.trim().isEmpty()) return "";
         else return ColorConvert.convertColorCode(msg);

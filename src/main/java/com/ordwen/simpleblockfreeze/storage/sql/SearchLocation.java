@@ -34,9 +34,9 @@ public class SearchLocation {
 
         try {
             final Connection connection = sqlManager.getConnection();
-            final String timestampQuery = "SELECT * FROM SBF_LOCATIONS WHERE WORLD_NAME = ? AND X = ? AND Y = ? AND Z = ?";
+            final String query = "SELECT SBF_LOCATIONS.ID FROM SBF_LOCATIONS WHERE WORLD_NAME = ? AND X = ? AND Y = ? AND Z = ?";
 
-            final PreparedStatement preparedStatement = connection.prepareStatement(timestampQuery);
+            final PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, world);
             preparedStatement.setDouble(2, x);
             preparedStatement.setDouble(3, y);
