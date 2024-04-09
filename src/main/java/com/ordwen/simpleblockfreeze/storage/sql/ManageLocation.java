@@ -95,19 +95,21 @@ public class ManageLocation {
      * @param z          z coordinate.
      * @param connection connection to database.
      * @param saveQuery  query to save location.
-     * @throws SQLException SQL errors.
      */
-    private void getStatement(String world, double x, double y, double z, Connection connection, String saveQuery) throws SQLException {
+    private void getStatement(String world, double x, double y, double z, Connection connection, String saveQuery) {
         final PreparedStatement playerStatement;
-        playerStatement = connection.prepareStatement(saveQuery);
+        try (connection) {
+            playerStatement = connection.prepareStatement(saveQuery);
 
-        playerStatement.setString(1, world);
-        playerStatement.setDouble(2, x);
-        playerStatement.setDouble(3, y);
-        playerStatement.setDouble(4, z);
+            playerStatement.setString(1, world);
+            playerStatement.setDouble(2, x);
+            playerStatement.setDouble(3, y);
+            playerStatement.setDouble(4, z);
 
-        playerStatement.executeUpdate();
-        playerStatement.close();
-        connection.close();
+            playerStatement.executeUpdate();
+            playerStatement.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
