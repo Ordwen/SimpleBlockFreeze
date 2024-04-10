@@ -3,14 +3,12 @@ package com.ordwen.simpleblockfreeze.events;
 import com.ordwen.simpleblockfreeze.configuration.Configuration;
 import com.ordwen.simpleblockfreeze.storage.sql.SQLManager;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockFadeEvent;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockGrowEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 
 public class BlockChangeListeners implements Listener {
@@ -37,6 +35,8 @@ public class BlockChangeListeners implements Listener {
 
     @EventHandler
     public void onBlockFade(BlockFadeEvent event) {
+        if (event.isCancelled()) return;
+
         if (isBlockFrozen(event.getBlock())) {
             event.setCancelled(true);
         }
@@ -44,13 +44,37 @@ public class BlockChangeListeners implements Listener {
 
     @EventHandler
     public void onBlockGrow(BlockGrowEvent event) {
-       if (isBlockFrozen(event.getNewState().getBlock())) {
+        if (event.isCancelled()) return;
+        if (event.getNewState().getType().equals(Material.VINE)) return;
+
+        System.out.println("===================================");
+        System.out.println("Block GROW Event");
+        System.out.println("old: " + event.getBlock().getType());
+        System.out.println("old coord: " + event.getBlock().getLocation());
+        System.out.println("new: " + event.getNewState().getType());
+        System.out.println("new coord: " + event.getNewState().getLocation());
+
+        // Block under = block.getRelative(0, -1, 0);
+
+        if (isBlockFrozen(event.getNewState().getBlock())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBlockSpread(BlockSpreadEvent event) {
+        if (event.isCancelled()) return;
+        if (event.getNewState().getType().equals(Material.VINE)) return;
+
+        if (isBlockFrozen(event.getSource())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onBlockBreakEvent(BlockBreakEvent event) {
+        if (event.isCancelled()) return;
+
         if (isBlockFrozen(event.getBlock())) {
             event.setCancelled(true);
         }
@@ -58,6 +82,8 @@ public class BlockChangeListeners implements Listener {
 
     @EventHandler
     public void onBlockPhysics(EntityChangeBlockEvent event) {
+        if (event.isCancelled()) return;
+
         if (isBlockFrozen(event.getBlock())) {
             event.setCancelled(true);
         }
@@ -65,6 +91,8 @@ public class BlockChangeListeners implements Listener {
 
     @EventHandler
     public void onFluidFlow(BlockFromToEvent event) {
+        if (event.isCancelled()) return;
+
         if (isBlockFrozen(event.getToBlock())) {
             event.setCancelled(true);
         }
