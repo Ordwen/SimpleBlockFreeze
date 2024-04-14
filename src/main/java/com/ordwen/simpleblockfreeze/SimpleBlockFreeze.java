@@ -24,7 +24,7 @@ public final class SimpleBlockFreeze extends JavaPlugin {
         new Configuration(this).load();
 
         /* register commands */
-        getCommand("sbfadmin").setExecutor(new AdminCommand());
+        getCommand("sbfadmin").setExecutor(new AdminCommand(this));
 
         /* register events */
         getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);

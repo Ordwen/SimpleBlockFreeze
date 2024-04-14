@@ -15,6 +15,7 @@ import com.sk89q.worldguard.internal.platform.WorldGuardPlatform;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -22,12 +23,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Configuration {
 
     private static ItemStack item;
     private static SQLManager sqlManager;
+
+    private static final Set<Material> verticalBlocks = new HashSet<>();
+    private static final Set<String> disabledWorlds = new HashSet<>();
+
     private static boolean isWorldGuardEnabled;
     private static WorldGuardPlatform wgPlatform = null;
 
@@ -44,6 +51,46 @@ public class Configuration {
         loadItem();
         loadSQLManager();
         loadWorldGuard();
+        loadVerticalBlocks();
+        loadDisabledWorlds();
+    }
+
+    /**
+     * Get the list of vertical blocks.
+     */
+    private void loadVerticalBlocks() {
+        verticalBlocks.clear();
+
+        final List<String> verticalBlocksList = config.getStringList("vertical_blocks");
+        if (verticalBlocksList.isEmpty()) {
+            PluginLogger.warn("vertical_blocks list is empty in config.yml.");
+            return;
+        }
+
+        for (String block : verticalBlocksList) {
+            final Material material = Material.getMaterial(block);
+            if (material == null) {
+                PluginLogger.configurationError(block, "Invalid material");
+                continue;
+            }
+
+            verticalBlocks.add(material);
+        }
+    }
+
+    /**
+     * Load the list of disabled worlds from the configuration file.
+     */
+    private void loadDisabledWorlds() {
+        disabledWorlds.clear();
+
+        final List<String> disabledWorldsList = config.getStringList("disabled_worlds");
+        if (disabledWorldsList.isEmpty()) {
+            PluginLogger.warn("List of disabled worlds is empty in config.yml.");
+            return;
+        }
+
+        disabledWorlds.addAll(disabledWorldsList);
     }
 
     /**
@@ -78,7 +125,7 @@ public class Configuration {
         if (itemMeta == null) return;
 
         final String name = itemSection.getString("name");
-        if (name != null) itemMeta.setDisplayName(name);
+        if (name != null) itemMeta.setDisplayName(ColorConvert.convertColorCode(name));
 
         final List<String> lore = itemSection.getStringList("lore");
         if (!lore.isEmpty()) lore.replaceAll(ColorConvert::convertColorCode);
@@ -152,7 +199,7 @@ public class Configuration {
     }
 
     /**
-     * Check if the player can build at the location using WorldGuard.
+     * Check if the player can build at the location.
      *
      * @param player   the player
      * @param world    the world
@@ -160,6 +207,7 @@ public class Configuration {
      * @return true if the player can build, false otherwise
      */
     public static boolean canBuild(Player player, World world, Location location) {
+        if (disabledWorlds.contains(world.getName())) return false;
         if (!isWorldGuardEnabled) return true;
 
         final com.sk89q.worldedit.util.Location adaptedLocation = BukkitAdapter.adapt(location);
@@ -188,5 +236,15 @@ public class Configuration {
      */
     public static SQLManager getSQLManager() {
         return sqlManager;
+    }
+
+    /**
+     * Check if the vertical blocks list contains the material.
+     *
+     * @param material material to check
+     * @return true if the material is in the list, false otherwise
+     */
+    public static boolean containsVerticalBlock(Material material) {
+        return verticalBlocks.contains(material);
     }
 }

@@ -26,7 +26,13 @@ public class BlockChangeListeners implements Listener {
      * @return true if the block is frozen, false otherwise
      */
     private boolean isBlockFrozen(Block block) {
-        final Location location = block.getLocation();
+        if (block == null) return false;
+
+        final Location location;
+        if (Configuration.containsVerticalBlock(block.getType())) {
+            location = block.getRelative(0, -1, 0).getLocation();
+        } else location = block.getLocation();
+
         final World world = location.getWorld();
         if (world == null) return false;
 

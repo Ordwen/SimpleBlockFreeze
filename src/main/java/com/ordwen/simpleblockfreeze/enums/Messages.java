@@ -19,6 +19,8 @@ public enum Messages {
     UNAUTHORIZED_REGION("unauthorized_region", "&cYou can't freeze blocks in this region."),
 
     ITEM_GIVEN("item_given", "&aFreeze item given to {player}."),
+    CONFIG_RELOADED("config_reloaded", "&aConfiguration reloaded."),
+
     ;
 
     private final String path;
