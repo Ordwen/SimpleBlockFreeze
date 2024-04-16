@@ -28,11 +28,7 @@ public class BlockChangeListeners implements Listener {
     private boolean isBlockFrozen(Block block) {
         if (block == null) return false;
 
-        final Location location;
-        if (Configuration.containsVerticalBlock(block.getType())) {
-            location = block.getRelative(0, -1, 0).getLocation();
-        } else location = block.getLocation();
-
+        final Location location = block.getLocation();
         final World world = location.getWorld();
         if (world == null) return false;
 
@@ -51,20 +47,27 @@ public class BlockChangeListeners implements Listener {
     @EventHandler
     public void onBlockGrow(BlockGrowEvent event) {
         if (event.isCancelled()) return;
-        if (event.getNewState().getType().equals(Material.VINE)) return;
 
-        System.out.println("===================================");
-        System.out.println("Block GROW Event");
-        System.out.println("old: " + event.getBlock().getType());
-        System.out.println("old coord: " + event.getBlock().getLocation());
-        System.out.println("new: " + event.getNewState().getType());
-        System.out.println("new coord: " + event.getNewState().getLocation());
+        final Material newMaterial = event.getNewState().getType();
+        final Block newBlock = event.getBlock();
 
-        // Block under = block.getRelative(0, -1, 0);
-
-        if (isBlockFrozen(event.getNewState().getBlock())) {
+        final Block sourceBlock = getVerticalSource(newMaterial, newBlock);
+        if (isBlockFrozen(sourceBlock)) {
             event.setCancelled(true);
         }
+    }
+
+    /**
+     * Get the source block for vertical blocks.
+     *
+     * @param newMaterial the new material
+     * @param newBlock    the new block
+     * @return the source block
+     */
+    private Block getVerticalSource(Material newMaterial, Block newBlock) {
+        if (Configuration.containsVerticalBlock(newMaterial)) {
+            return newBlock.getRelative(0, -1, 0);
+        } else return newBlock;
     }
 
     @EventHandler
