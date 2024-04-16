@@ -245,7 +245,6 @@ public class Configuration {
      * @return true if the material is in the list, false otherwise
      */
     public static boolean containsVerticalBlock(Material material) {
-        System.out.println("contains vertical block: " + verticalBlocks.contains(material));
         return verticalBlocks.contains(material);
     }
 }
