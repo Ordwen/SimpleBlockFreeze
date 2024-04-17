@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.ordwen'
-version = '0.0.0-PRE'
+version = '0.0.1-BETA'
 
 repositories {
     mavenCentral()

@@ -22,12 +22,12 @@ public final class SimpleBlockFreeze extends JavaPlugin {
 
         /* Load Metrics */
         // https://bstats.org/plugin/bukkit/SimpleBlockFreeze/1234
-        int pluginId = 1234;
-        final Metrics metrics = new Metrics(this, pluginId);
+        //int pluginId = 1234;
+        //final Metrics metrics = new Metrics(this, pluginId);
 
         /* Check for updates */
         new AutoUpdater(this).checkForUpdate();
-        checkForSpigotUpdate();
+        //checkForSpigotUpdate();
 
         /* init files */
         new MessagesFile(this).loadMessagesFiles();
