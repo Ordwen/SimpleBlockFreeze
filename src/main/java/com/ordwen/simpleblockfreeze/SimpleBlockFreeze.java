@@ -5,7 +5,10 @@ import com.ordwen.simpleblockfreeze.configuration.Configuration;
 import com.ordwen.simpleblockfreeze.configuration.MessagesFile;
 import com.ordwen.simpleblockfreeze.events.BlockChangeListeners;
 import com.ordwen.simpleblockfreeze.events.PlayerInteractListener;
+import com.ordwen.simpleblockfreeze.tools.AutoUpdater;
+import com.ordwen.simpleblockfreeze.tools.Metrics;
 import com.ordwen.simpleblockfreeze.tools.PluginLogger;
+import com.ordwen.simpleblockfreeze.tools.UpdateChecker;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class SimpleBlockFreeze extends JavaPlugin {
@@ -16,6 +19,15 @@ public final class SimpleBlockFreeze extends JavaPlugin {
     public void onEnable() {
         PluginLogger.info("Plugin is starting...");
         SimpleBlockFreeze.setInstance(this);
+
+        /* Load Metrics */
+        // https://bstats.org/plugin/bukkit/SimpleBlockFreeze/1234
+        int pluginId = 1234;
+        final Metrics metrics = new Metrics(this, pluginId);
+
+        /* Check for updates */
+        new AutoUpdater(this).checkForUpdate();
+        checkForSpigotUpdate();
 
         /* init files */
         new MessagesFile(this).loadMessagesFiles();
@@ -34,6 +46,23 @@ public final class SimpleBlockFreeze extends JavaPlugin {
     @Override
     public void onDisable() {
         PluginLogger.info("Plugin is stopping...");
+    }
+
+    /**
+     * Check if an update is available.
+     */
+    private void checkForSpigotUpdate() {
+        PluginLogger.info("Checking for update...");
+        new UpdateChecker(this, 100990).getVersion(version -> {
+            if (this.getDescription().getVersion().equals(version)) {
+                PluginLogger.info("Plugin is up to date.");
+            } else {
+                PluginLogger.warn("A new update is available !");
+                PluginLogger.warn("Current version : " + this.getDescription().getVersion() + ", Available version : " + version);
+                PluginLogger.warn("Please download latest version :");
+                PluginLogger.warn("https://www.spigotmc.org/resources/odailyquests.100990/");
+            }
+        });
     }
 
     /**

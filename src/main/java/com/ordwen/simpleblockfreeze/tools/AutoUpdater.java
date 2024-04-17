@@ -28,26 +28,16 @@ public class AutoUpdater {
             PluginLogger.error(e.getMessage());
         }
 
-        final FileConfiguration playerInterfaceFile = new YamlConfiguration();
-        final File playerInterface = new File(plugin.getDataFolder(), "playerInterface.yml");
-
-        try {
-            playerInterfaceFile.load(playerInterface);
-        } catch (IOException | InvalidConfigurationException e) {
-            PluginLogger.error("An error occurred while loading the playerInterface file.");
-            PluginLogger.error(e.getMessage());
-        }
-
         final String currentVersion = plugin.getDescription().getVersion();
         final String configVersion = configFile.getString("version");
         if (configVersion == null) {
-            PluginLogger.error("The 'version' field is missing from the config file. The auto updater cannot work without it.");
+            PluginLogger.error("The 'version' field is missing from the config file. The auto updater will not work.");
             return;
         }
 
         if (!configVersion.equals(currentVersion)) {
-            PluginLogger.warn("It looks like you were using an older version of the plugin. Let's update your files!");
-            PluginLogger.fine("All files have been updated!");
+            PluginLogger.warn("It looks like you were using an older version of the plugin.");
+            PluginLogger.warn("If necessary, your files will be automatically updated.");
         }
 
         // update the config version
