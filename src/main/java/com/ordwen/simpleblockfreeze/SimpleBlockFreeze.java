@@ -6,19 +6,18 @@ import com.ordwen.simpleblockfreeze.configuration.MessagesFile;
 import com.ordwen.simpleblockfreeze.events.BlockChangeListeners;
 import com.ordwen.simpleblockfreeze.events.PlayerInteractListener;
 import com.ordwen.simpleblockfreeze.tools.AutoUpdater;
-import com.ordwen.simpleblockfreeze.tools.Metrics;
 import com.ordwen.simpleblockfreeze.tools.PluginLogger;
 import com.ordwen.simpleblockfreeze.tools.UpdateChecker;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class SimpleBlockFreeze extends JavaPlugin {
 
-    private static SimpleBlockFreeze instance;
+    public static SimpleBlockFreeze getInstance() {
+        return JavaPlugin.getPlugin(SimpleBlockFreeze.class);
+    }
 
     @Override
     public void onEnable() {
-        SimpleBlockFreeze.setInstance(this);
-
         /* Load Metrics */
         // https://bstats.org/plugin/bukkit/SimpleBlockFreeze/1234
         //int pluginId = 1234;
@@ -64,23 +63,5 @@ public final class SimpleBlockFreeze extends JavaPlugin {
                 PluginLogger.warn("https://www.spigotmc.org/resources/odailyquests.100990/");
             }
         });
-    }
-
-    /**
-     * Set the instance of the plugin.
-     *
-     * @param plugin instance of the plugin
-     */
-    public static void setInstance(SimpleBlockFreeze plugin) {
-        instance = plugin;
-    }
-
-    /**
-     * Get the instance of the plugin.
-     *
-     * @return SimpleBlockFreeze instance
-     */
-    public static SimpleBlockFreeze getInstance() {
-        return instance;
     }
 }
