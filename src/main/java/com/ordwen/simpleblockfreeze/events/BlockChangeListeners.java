@@ -30,9 +30,10 @@ public class BlockChangeListeners implements Listener {
 
         final Location location = block.getLocation();
         final World world = location.getWorld();
+
         if (world == null) return false;
 
-        return sqlManager.searchLocation(world.getName(), location.getX(), location.getY(), location.getZ());
+        return sqlManager.searchLocation(world, block.getX(), block.getY(), block.getZ()).join(); // TODO: Change this
     }
 
     @EventHandler

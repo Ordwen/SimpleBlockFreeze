@@ -1,6 +1,7 @@
 package com.ordwen.simpleblockfreeze.enums;
 
 import com.ordwen.simpleblockfreeze.tools.ColorConvert;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public enum Messages {
@@ -75,5 +76,12 @@ public enum Messages {
      */
     public String getPath() {
         return this.path;
+    }
+
+    public void send(CommandSender sender) {
+        final String message = toString();
+        if(!message.isEmpty()) {
+            sender.sendMessage(message);
+        }
     }
 }

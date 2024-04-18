@@ -1,24 +1,117 @@
 package com.ordwen.simpleblockfreeze.storage.sql;
 
+import com.ordwen.simpleblockfreeze.storage.IBlockManager;
 import com.ordwen.simpleblockfreeze.tools.PluginLogger;
+import com.ordwen.simpleblockfreeze.tools.SqlUtil;
 import com.zaxxer.hikari.HikariDataSource;
-import org.bukkit.entity.Player;
+import org.bukkit.World;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.concurrent.CompletableFuture;
 
-public abstract class SQLManager implements ISQLManager {
+public abstract class SQLManager implements IBlockManager {
 
-    protected HikariDataSource hikariDataSource;
+    private final HikariDataSource hikariDataSource;
 
-    protected SearchLocation searchLocation;
-    protected ManageLocation manageLocation;
+    protected SQLManager(HikariDataSource hikariDataSource) {
+        this.hikariDataSource = hikariDataSource;
+    }
 
-    public void setupTables() {
-        final Connection connection = getConnection();
-        try (connection) {
-            if (!tableExists(connection, "SBF_LOCATIONS")) {
+    @Override
+    public void init() {
+        setupTables();
+    }
 
-                final String str = """
+    @Override
+    public void close() {
+        this.hikariDataSource.close();
+    }
+
+    @Override
+    public CompletableFuture<Void> saveLocation(World world, int x, int y, int z) {
+
+        return CompletableFuture.runAsync(() -> {
+
+            final String SAVE_QUERY = "INSERT INTO SBF_LOCATIONS(WORLD_NAME, X, Y, Z) VALUES (?, ?, ?, ?)";
+
+            try(final Connection connection = getConnection()) {
+                runStatement(world, x, y, z, connection, SAVE_QUERY);
+            } catch (SQLException exception) {
+                throw new RuntimeException(exception);
+            }
+        });
+    }
+
+    @Override
+    public CompletableFuture<Void> deleteLocation(World world, int x, int y, int z) {
+        return CompletableFuture.runAsync(() -> {
+
+            final String DELETE_QUERY = "DELETE FROM SBF_LOCATIONS WHERE WORLD_NAME = ? AND X = ? AND Y = ? AND Z = ?";
+
+            try (Connection connection = getConnection()) {
+                runStatement(world, x, y, z, connection, DELETE_QUERY);
+            } catch (SQLException exception) {
+                throw new RuntimeException(exception);
+            }
+        });
+    }
+
+    @Override
+    public CompletableFuture<Boolean> searchLocation(World world, int x, int y, int z) {
+        return CompletableFuture.supplyAsync(() -> {
+
+            final String SEARCH_QUERY = "SELECT 1 FROM SBF_LOCATIONS WHERE WORLD_NAME = ? AND X = ? AND Y = ? AND Z = ?";
+
+            try (Connection connection = getConnection(); PreparedStatement stmt = connection.prepareStatement(SEARCH_QUERY)) {
+
+                stmt.setString(1, world.getName());
+                stmt.setInt(2, x);
+                stmt.setInt(3, y);
+                stmt.setInt(4, z);
+
+                try (ResultSet resultSet = stmt.executeQuery()) {
+                    return resultSet.next();
+                }
+
+            } catch (SQLException exception) {
+                throw new RuntimeException(exception);
+            }
+        });
+    }
+
+
+    /**
+     * Get database connection.
+     *
+     * @return database Connection.
+     */
+    public Connection getConnection() {
+
+        if(this.hikariDataSource == null || this.hikariDataSource.isClosed()) {
+            return null;
+        }
+
+        try {
+            return this.hikariDataSource.getConnection();
+        } catch (SQLException e) {
+            PluginLogger.error("An error occurred while getting a connection to the database.");
+            PluginLogger.error(e.getMessage());
+        }
+
+        return null;
+    }
+
+    private void setupTables() {
+        try (final Connection connection = getConnection()) {
+
+            if(SqlUtil.tableExists(connection, "SBF_LOCATIONS")) {
+                return;
+            }
+
+            final String str = """
                         create table SBF_LOCATIONS
                           (
                              ID int auto_increment  ,
@@ -29,105 +122,24 @@ public abstract class SQLManager implements ISQLManager {
                              constraint SBF_PK_LOCATIONS primary key (ID)
                           );""";
 
-                try (final PreparedStatement preparedStatement = connection.prepareStatement(str)) {
-                    preparedStatement.execute();
-                    PluginLogger.info("Table 'SBF_LOCATIONS' created in database.");
-                }
+            try (final PreparedStatement preparedStatement = connection.prepareStatement(str)) {
+                preparedStatement.execute();
+                PluginLogger.info("Table 'SBF_LOCATIONS' created in database.");
             }
+
         } catch (SQLException e) {
             PluginLogger.error("An error occurred while creating the table 'SBF_LOCATIONS'.");
             PluginLogger.error(e.getMessage());
         }
     }
 
-    /**
-     * Check if a table exists in database.
-     *
-     * @param connection connection to check.
-     * @param tableName  name of the table to check.
-     * @return true if table exists.
-     * @throws SQLException SQL errors.
-     */
-    private static boolean tableExists(Connection connection, String tableName) throws SQLException {
-        final DatabaseMetaData meta = connection.getMetaData();
-        final ResultSet resultSet = meta.getTables(null, null, tableName, new String[]{"TABLE"});
-
-        return resultSet.next();
-    }
-
-    /**
-     * Close database connection.
-     */
-    public void close() {
-        this.hikariDataSource.close();
-    }
-
-    /**
-     * Get database connection.
-     *
-     * @return database Connection.
-     */
-    public Connection getConnection() {
-        if (this.hikariDataSource != null && !this.hikariDataSource.isClosed()) {
-            try {
-                return this.hikariDataSource.getConnection();
-            } catch (SQLException e) {
-                PluginLogger.error("An error occurred while getting a connection to the database.");
-                PluginLogger.error(e.getMessage());
-            }
+    private void runStatement(World world, int x, int y, int z, Connection connection, String query) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, world.getName());
+            stmt.setInt(2, x);
+            stmt.setInt(3, y);
+            stmt.setInt(4, z);
+            stmt.executeUpdate();
         }
-        return null;
-    }
-
-    /**
-     * Test database connection.
-     *
-     * @throws SQLException SQL errors.
-     */
-    protected void testConnection() throws SQLException {
-        final Connection con = getConnection();
-        if (con.isValid(1)) {
-            PluginLogger.info("Plugin successfully connected to database " + con.getCatalog() + ".");
-            con.close();
-        } else PluginLogger.error("IMPOSSIBLE TO CONNECT TO DATABASE");
-    }
-
-    /**
-     * Search for a block location in database.
-     *
-     * @param world world name.
-     * @param x     x coordinate.
-     * @param y     y coordinate.
-     * @param z     z coordinate.
-     * @return true if the location was found, false otherwise.
-     */
-    public boolean searchLocation(String world, double x, double y, double z) {
-        return searchLocation.searchLocation(world, x, y, z);
-    }
-
-    /**
-     * Save a block location in database.
-     *
-     * @param player involved player.
-     * @param world  world name.
-     * @param x      x coordinate.
-     * @param y      y coordinate.
-     * @param z      z coordinate.
-     */
-    public void saveLocation(Player player, String world, double x, double y, double z) {
-        manageLocation.saveLocation(player, world, x, y, z);
-    }
-
-    /**
-     * Remove a block location from database.
-     *
-     * @param player involved player.
-     * @param world  world name.
-     * @param x      x coordinate.
-     * @param y      y coordinate.
-     * @param z      z coordinate.
-     */
-    public void deleteLocation(Player player, String world, double x, double y, double z) {
-        manageLocation.deleteLocation(player, world, x, y, z);
     }
 }
