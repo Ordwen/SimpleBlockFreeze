@@ -37,5 +37,12 @@ disabled_worlds:
   - "world_nether"
   - "world_the_end"
 
+# Show particles when freezing/unfreezing a block.
+# Find all effects here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
+particles:
+  enabled: true
+  freeze: "SLIME"
+  unfreeze: "SOUL"
+
 # If enabled, the player will not be able to use the block freezer in a worldguard region.
 use_worldguard: false
