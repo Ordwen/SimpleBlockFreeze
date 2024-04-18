@@ -17,7 +17,6 @@ public final class SimpleBlockFreeze extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        PluginLogger.info("Plugin is starting...");
         SimpleBlockFreeze.setInstance(this);
 
         /* Load Metrics */
@@ -45,7 +44,6 @@ public final class SimpleBlockFreeze extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        PluginLogger.info("Plugin is stopping...");
         if(Configuration.getBlockManager() != null) {
             Configuration.getBlockManager().close();
         }
