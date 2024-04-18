@@ -1,7 +1,9 @@
 package com.ordwen.simpleblockfreeze.configuration;
 
+import com.ordwen.simpleblockfreeze.storage.IBlockManager;
 import com.ordwen.simpleblockfreeze.SimpleBlockFreeze;
 import com.ordwen.simpleblockfreeze.configuration.item.ItemGetter;
+import com.ordwen.simpleblockfreeze.storage.sql.InternalBlockManager;
 import com.ordwen.simpleblockfreeze.storage.sql.SQLManager;
 import com.ordwen.simpleblockfreeze.storage.sql.h2.H2Manager;
 import com.ordwen.simpleblockfreeze.storage.sql.mysql.MySQLManager;
@@ -30,7 +32,7 @@ import java.util.Set;
 public class Configuration {
 
     private static ItemStack item;
-    private static SQLManager sqlManager;
+    private static IBlockManager iBlockManager;
 
     private static final Set<Material> verticalBlocks = new HashSet<>();
     private static final Set<String> disabledWorlds = new HashSet<>();
@@ -49,7 +51,7 @@ public class Configuration {
     public void load() {
         plugin.saveDefaultConfig();
         loadItem();
-        loadSQLManager();
+        loadBlockManager();
         loadWorldGuard();
         loadVerticalBlocks();
         loadDisabledWorlds();
@@ -137,8 +139,9 @@ public class Configuration {
     /**
      * Initialize the storage manager depending on the storage mode.
      */
-    private void loadSQLManager() {
+    private void loadBlockManager() {
         final String storageMode = config.getString("storage_mode");
+
         if (storageMode == null) {
             PluginLogger.error("Storage mode not found in config.yml.");
             throw new IllegalArgumentException("Storage mode not found in config.yml.");
@@ -146,14 +149,19 @@ public class Configuration {
 
         if (storageMode.equalsIgnoreCase("mysql")) {
             PluginLogger.info("MySQL storage mode enabled.");
-            setSQLManager(new MySQLManager(plugin));
+            setBlockManager(new MySQLManager(plugin));
         } else if (storageMode.equalsIgnoreCase("h2")) {
             PluginLogger.info("H2 storage mode enabled.");
-            setSQLManager(new H2Manager());
+            setBlockManager(new H2Manager());
+        } else if(storageMode.equalsIgnoreCase("internal")) {
+            PluginLogger.info("Internal storage mode enabled.");
+            setBlockManager(new InternalBlockManager(plugin));
         } else {
             PluginLogger.error("Invalid storage mode in config.yml.");
             throw new IllegalArgumentException("Invalid storage mode in config.yml.");
         }
+
+        getBlockManager().init();
     }
 
     /**
@@ -161,8 +169,8 @@ public class Configuration {
      *
      * @param manager SQLManager instance
      */
-    private static void setSQLManager(SQLManager manager) {
-        sqlManager = manager;
+    private static void setBlockManager(IBlockManager manager) {
+        iBlockManager = manager;
     }
 
     /**
@@ -234,8 +242,8 @@ public class Configuration {
      *
      * @return the SQL manager
      */
-    public static SQLManager getSQLManager() {
-        return sqlManager;
+    public static IBlockManager getBlockManager() {
+        return iBlockManager;
     }
 
     /**

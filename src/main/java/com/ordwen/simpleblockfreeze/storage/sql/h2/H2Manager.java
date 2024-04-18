@@ -1,41 +1,22 @@
 package com.ordwen.simpleblockfreeze.storage.sql.h2;
 
-import com.ordwen.simpleblockfreeze.storage.sql.ManageLocation;
 import com.ordwen.simpleblockfreeze.storage.sql.SQLManager;
-import com.ordwen.simpleblockfreeze.storage.sql.SearchLocation;
-import com.ordwen.simpleblockfreeze.tools.PluginLogger;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-
-import java.sql.SQLException;
+import org.jetbrains.annotations.Contract;
 
 public class H2Manager extends SQLManager {
 
-
     public H2Manager() {
-
-        super.searchLocation = new SearchLocation(this);
-        super.manageLocation = new ManageLocation(this);
-
-        setupDatabase();
+        this(initH2());
     }
 
-    /**
-     * Init database.
-     */
-    public void setupDatabase() {
-        initH2();
-
-        try {
-            testConnection();
-        } catch (SQLException e) {
-            PluginLogger.error(e.getMessage());
-        }
-
-        setupTables();
+    public H2Manager(HikariDataSource hikariDataSource) {
+        super(hikariDataSource);
     }
 
-    private void initH2() {
+    @Contract("-> new")
+    private static HikariDataSource initH2() {
         final HikariConfig config = new HikariConfig();
         config.setDriverClassName("org.h2.Driver");
         config.setJdbcUrl("jdbc:h2:./plugins/SimpleBlockFreeze/database");
@@ -45,11 +26,6 @@ public class H2Manager extends SQLManager {
         config.setMaxLifetime(300000L);
         config.setLeakDetectionThreshold(60000L);
         config.setConnectionTimeout(60000L);
-        super.hikariDataSource = new HikariDataSource(config);
-    }
-
-    @Override
-    public String getStorageMode() {
-        return "h2";
+        return new HikariDataSource(config);
     }
 }
