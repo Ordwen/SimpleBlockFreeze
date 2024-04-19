@@ -1,8 +1,7 @@
-package com.ordwen.simpleblockfreeze.storage.sql;
+package com.ordwen.simpleblockfreeze.storage;
 
 import com.jeff_media.customblockdata.CustomBlockData;
 import com.ordwen.simpleblockfreeze.SimpleBlockFreeze;
-import com.ordwen.simpleblockfreeze.storage.IBlockManager;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.persistence.PersistentDataType;
@@ -11,11 +10,9 @@ import java.util.concurrent.CompletableFuture;
 
 public class InternalBlockManager implements IBlockManager {
 
-    private final SimpleBlockFreeze plugin;
     private final NamespacedKey freezeKey;
 
     public InternalBlockManager(SimpleBlockFreeze plugin) {
-        this.plugin = plugin;
         this.freezeKey = new NamespacedKey(plugin, "SIMPLE_BLOCK_FREEZE");
     }
 

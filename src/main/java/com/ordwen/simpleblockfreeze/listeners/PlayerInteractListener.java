@@ -1,10 +1,9 @@
-package com.ordwen.simpleblockfreeze.events;
+package com.ordwen.simpleblockfreeze.listeners;
 
-import com.ordwen.simpleblockfreeze.configuration.Configuration;
+import com.ordwen.simpleblockfreeze.SimpleBlockFreeze;
 import com.ordwen.simpleblockfreeze.enums.Messages;
 import com.ordwen.simpleblockfreeze.enums.Permissions;
-import com.ordwen.simpleblockfreeze.storage.IBlockManager;
-import com.ordwen.simpleblockfreeze.storage.sql.SQLManager;
+import com.ordwen.simpleblockfreeze.flag.FlagType;
 import com.ordwen.simpleblockfreeze.tools.PluginLogger;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -18,17 +17,17 @@ import org.bukkit.inventory.ItemStack;
 
 public class PlayerInteractListener implements Listener {
 
-    private final IBlockManager blockManager;
+    private final SimpleBlockFreeze plugin;
 
-    public PlayerInteractListener() {
-        this.blockManager = Configuration.getBlockManager();
+    public PlayerInteractListener(SimpleBlockFreeze plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         final ItemStack item = event.getItem();
         if (item == null) return;
-        if (!item.isSimilar(Configuration.getItem())) return;
+        if (!plugin.getItemManager().similar(item)) return;
 
         event.setCancelled(true);
         final Player player = event.getPlayer();
@@ -45,7 +44,7 @@ public class PlayerInteractListener implements Listener {
         final World world = location.getWorld();
         if (world == null) return;
 
-        if (!Configuration.canBuild(player, world, location)) {
+        if(!plugin.getFlagManager().test(FlagType.FREEZE_BLOCK, player, location)) {
             Messages.UNAUTHORIZED_REGION.send(player);
             return;
         }
@@ -65,14 +64,14 @@ public class PlayerInteractListener implements Listener {
         final int y = block.getY();
         final int z = block.getZ();
 
-        final boolean store = blockManager.searchLocation(world, x, y, z).join(); // TODO: Change this
+        final boolean store = plugin.getBlockManager().searchLocation(world, x, y, z).join(); // TODO: Change this
 
         if(!store) {
             Messages.FREEZE_NOT_FOUND.send(player);
             return;
         }
 
-        blockManager.deleteLocation(world, x, y, z)
+        plugin.getBlockManager().deleteLocation(world, x, y, z)
                 .thenRun(() -> {
                     Messages.UNFREEZE_SUCCESS.send(player);
                 }).exceptionally(exception -> {
@@ -89,14 +88,14 @@ public class PlayerInteractListener implements Listener {
         final int y = block.getY();
         final int z = block.getZ();
 
-        final boolean store = blockManager.searchLocation(world, x, y, z).join(); // TODO: Change this
+        final boolean store = plugin.getBlockManager().searchLocation(world, x, y, z).join(); // TODO: Change this
 
         if(store) {
             Messages.ALREADY_FROZEN.send(player);
             return;
         }
 
-        blockManager.deleteLocation(world, x, y, z)
+        plugin.getBlockManager().deleteLocation(world, x, y, z)
                 .thenRun(() -> {
                     Messages.FREEZE_SUCCESS.send(player);
                 }).exceptionally(exception -> {
