@@ -1,7 +1,6 @@
 package com.ordwen.simpleblockfreeze.commands;
 
 import com.ordwen.simpleblockfreeze.SimpleBlockFreeze;
-import com.ordwen.simpleblockfreeze.configuration.Configuration;
 import com.ordwen.simpleblockfreeze.enums.Messages;
 import com.ordwen.simpleblockfreeze.enums.Permissions;
 import org.bukkit.Bukkit;
@@ -27,10 +26,8 @@ public class AdminCommand extends CommandMessages implements CommandExecutor {
         }
 
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-            plugin.reloadConfig();
-            new Configuration(plugin).load();
-            final String msg = Messages.CONFIG_RELOADED.toString();
-            if (!msg.isEmpty()) sender.sendMessage(msg);
+            plugin.onReload();
+            Messages.CONFIG_RELOADED.send(sender);
             return true;
         }
 
@@ -41,15 +38,14 @@ public class AdminCommand extends CommandMessages implements CommandExecutor {
 
         if (args.length == 2 && args[0].equalsIgnoreCase("give")) {
             final Player target = Bukkit.getPlayer(args[1]);
+
             if (target == null) {
-                final String msg = Messages.PLAYER_NOT_FOUND.toString();
-                if (!msg.isEmpty()) sender.sendMessage(msg);
+                Messages.PLAYER_NOT_FOUND.send(sender);
                 return true;
             }
 
-            target.getInventory().addItem(Configuration.getItem());
-            final String msg = Messages.ITEM_GIVEN.toString();
-            if (!msg.isEmpty()) sender.sendMessage(msg.replace("{player}", target.getName()));
+            target.getInventory().addItem(plugin.getItemManager().getItemStack());
+            Messages.ITEM_GIVEN.send(sender);
             return true;
         }
 

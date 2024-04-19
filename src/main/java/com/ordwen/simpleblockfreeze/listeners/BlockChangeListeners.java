@@ -1,7 +1,7 @@
-package com.ordwen.simpleblockfreeze.events;
+package com.ordwen.simpleblockfreeze.listeners;
 
-import com.ordwen.simpleblockfreeze.configuration.Configuration;
-import com.ordwen.simpleblockfreeze.storage.sql.SQLManager;
+import com.ordwen.simpleblockfreeze.Options;
+import com.ordwen.simpleblockfreeze.SimpleBlockFreeze;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -13,10 +13,10 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 
 public class BlockChangeListeners implements Listener {
 
-    private final SQLManager sqlManager;
+    private final SimpleBlockFreeze plugin;
 
-    public BlockChangeListeners() {
-        this.sqlManager = Configuration.getSQLManager();
+    public BlockChangeListeners(SimpleBlockFreeze plugin) {
+        this.plugin = plugin;
     }
 
     /**
@@ -33,21 +33,18 @@ public class BlockChangeListeners implements Listener {
 
         if (world == null) return false;
 
-        return sqlManager.searchLocation(world, block.getX(), block.getY(), block.getZ()).join(); // TODO: Change this
+        return plugin.getBlockManager().searchLocation(world, block.getX(), block.getY(), block.getZ()).join(); // TODO: Change this
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockFade(BlockFadeEvent event) {
-        if (event.isCancelled()) return;
-
         if (isBlockFrozen(event.getBlock())) {
             event.setCancelled(true);
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockGrow(BlockGrowEvent event) {
-        if (event.isCancelled()) return;
 
         final Material newMaterial = event.getNewState().getType();
         final Block newBlock = event.getBlock();
@@ -66,14 +63,11 @@ public class BlockChangeListeners implements Listener {
      * @return the source block
      */
     private Block getVerticalSource(Material newMaterial, Block newBlock) {
-        if (Configuration.containsVerticalBlock(newMaterial)) {
-            return newBlock.getRelative(0, -1, 0);
-        } else return newBlock;
+        return Options.VERTICAL_BLOCKS.contains(newMaterial) ? newBlock.getRelative(0, -1, 0) : newBlock;
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockSpread(BlockSpreadEvent event) {
-        if (event.isCancelled()) return;
         if (event.getNewState().getType().equals(Material.VINE)) return;
 
         if (isBlockFrozen(event.getSource())) {
@@ -81,28 +75,22 @@ public class BlockChangeListeners implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockBreakEvent(BlockBreakEvent event) {
-        if (event.isCancelled()) return;
-
         if (isBlockFrozen(event.getBlock())) {
             event.setCancelled(true);
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockPhysics(EntityChangeBlockEvent event) {
-        if (event.isCancelled()) return;
-
         if (isBlockFrozen(event.getBlock())) {
             event.setCancelled(true);
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onFluidFlow(BlockFromToEvent event) {
-        if (event.isCancelled()) return;
-
         if (isBlockFrozen(event.getToBlock())) {
             event.setCancelled(true);
         }
