@@ -1,5 +1,6 @@
-package com.ordwen.simpleblockfreeze;
+package com.ordwen.simpleblockfreeze.task;
 
+import com.ordwen.simpleblockfreeze.SimpleBlockFreeze;
 import com.ordwen.simpleblockfreeze.tools.PluginLogger;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;

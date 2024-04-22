@@ -8,6 +8,7 @@ import com.ordwen.simpleblockfreeze.LocationKey;
 import com.ordwen.simpleblockfreeze.SimpleBlockFreeze;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -30,6 +32,11 @@ public class BlockManager {
         this.plugin = plugin;
         this.file = new File(plugin.getDataFolder(), "blocks.json");
         this.keys = new HashSet<>();
+    }
+
+    @UnmodifiableView
+    public Set<LocationKey> getKeys() {
+        return Collections.unmodifiableSet(keys);
     }
 
     public boolean isFreezeBlock(Block block) {
