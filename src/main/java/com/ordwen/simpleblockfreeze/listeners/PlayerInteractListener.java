@@ -52,57 +52,35 @@ public class PlayerInteractListener implements Listener {
         final Action action = event.getAction();
 
         if (action == Action.RIGHT_CLICK_BLOCK) {
-            unfreeze(player, world, block);
+            unfreeze(player, block);
         } else if (action == Action.LEFT_CLICK_BLOCK) {
-            freeze(player, world, block);
+            freeze(player, block);
         }
     }
 
-    private void unfreeze(Player player, World world, Block block) {
+    private void unfreeze(Player player, Block block) {
 
-        final int x = block.getX();
-        final int y = block.getY();
-        final int z = block.getZ();
-
-        final boolean store = plugin.getBlockManager().searchLocation(world, x, y, z).join(); // TODO: Change this
+        final boolean store = plugin.getBlockManager().isFreezeBlock(block);
 
         if(!store) {
             Messages.FREEZE_NOT_FOUND.send(player);
             return;
         }
 
-        plugin.getBlockManager().deleteLocation(world, x, y, z)
-                .thenRun(() -> {
-                    Messages.UNFREEZE_SUCCESS.send(player);
-                }).exceptionally(exception -> {
-                    PluginLogger.error("An error occurred while deleting a block location in the database.");
-                    PluginLogger.error(exception.getMessage());
-                    Messages.ERROR_OCCURRED.send(player);
-                    return null;
-                });
+        plugin.getBlockManager().unfreezeBlock(block);
+        Messages.UNFREEZE_SUCCESS.send(player);
     }
 
-    private void freeze(Player player, World world, Block block) {
+    private void freeze(Player player, Block block) {
 
-        final int x = block.getX();
-        final int y = block.getY();
-        final int z = block.getZ();
-
-        final boolean store = plugin.getBlockManager().searchLocation(world, x, y, z).join(); // TODO: Change this
+        final boolean store = plugin.getBlockManager().isFreezeBlock(block);
 
         if(store) {
             Messages.ALREADY_FROZEN.send(player);
             return;
         }
 
-        plugin.getBlockManager().deleteLocation(world, x, y, z)
-                .thenRun(() -> {
-                    Messages.FREEZE_SUCCESS.send(player);
-                }).exceptionally(exception -> {
-                    PluginLogger.error("An error occurred while saving a block location in the database.");
-                    PluginLogger.error(exception.getMessage());
-                    Messages.ERROR_OCCURRED.send(player);
-                    return null;
-                });
+        plugin.getBlockManager().freezeBlock(block);
+        Messages.FREEZE_SUCCESS.send(player);
     }
 }

@@ -1,30 +1,36 @@
 package com.ordwen.simpleblockfreeze;
 
+import com.ordwen.simpleblockfreeze.block.BlockManager;
 import com.ordwen.simpleblockfreeze.commands.AdminCommand;
-import com.ordwen.simpleblockfreeze.configuration.MessagesFile;
 import com.ordwen.simpleblockfreeze.flag.FlagManager;
-import com.ordwen.simpleblockfreeze.storage.StorageMode;
 import com.ordwen.simpleblockfreeze.item.ItemManager;
 import com.ordwen.simpleblockfreeze.listeners.BlockChangeListeners;
 import com.ordwen.simpleblockfreeze.listeners.PlayerInteractListener;
-import com.ordwen.simpleblockfreeze.storage.IBlockManager;
-import com.ordwen.simpleblockfreeze.tools.AutoUpdater;
 import com.ordwen.simpleblockfreeze.tools.PluginLogger;
 import com.ordwen.simpleblockfreeze.tools.UpdateChecker;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.io.IOException;
 
 public final class SimpleBlockFreeze extends JavaPlugin {
 
-    private IBlockManager blockManager;
+    private final BlockManager blockManager;
     private final ItemManager itemManager;
     private final FlagManager flagManager;
 
+    private BukkitConfigFile messageFile;
+
+    private BukkitTask saveTask;
+
     public SimpleBlockFreeze() {
         this.itemManager = new ItemManager();
+        this.blockManager = new BlockManager(this);
         this.flagManager = new FlagManager(this);
     }
 
-    public static SimpleBlockFreeze getInstance() {
+    public static SimpleBlockFreeze instance() {
         return JavaPlugin.getPlugin(SimpleBlockFreeze.class);
     }
 
@@ -36,43 +42,44 @@ public final class SimpleBlockFreeze extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        /* Load Metrics */
-        // https://bstats.org/plugin/bukkit/SimpleBlockFreeze/1234
-        //int pluginId = 1234;
-        //final Metrics metrics = new Metrics(this, pluginId);
-
-        /* Check for updates */
-        new AutoUpdater(this).checkForUpdate();
-        //checkForSpigotUpdate();
-
-        /* init files */
-        new MessagesFile(this).loadMessagesFiles();
-
-        /* load config */
-        loadBlockManager();
+        this.saveTask = SaveTask.runFor(this);
 
         /* register commands */
-        getCommand("sbfadmin").setExecutor(new AdminCommand(this));
+        registerCommands();
 
         /* register events */
-        getServer().getPluginManager().registerEvents(new PlayerInteractListener(this), this);
-        getServer().getPluginManager().registerEvents(new BlockChangeListeners(this), this);
+        registerListeners();
+
+        try {
+            getBlockManager().load();
+        } catch (IOException exception) {
+            PluginLogger.error("An error occurred while loading blocks.", exception);
+        }
+
+        this.messageFile = new BukkitConfigFile(getDataFolder(), "messages.yml", this);
+        this.messageFile.setup();
     }
 
     @Override
     public void onDisable() {
-        if(getBlockManager() != null) {
-            getBlockManager().close();
+
+        try {
+            getBlockManager().save();
+        } catch (IOException exception) {
+            PluginLogger.error("An error occurred while saving blocks.", exception);
         }
+
     }
 
     public void onReload() {
         reloadConfig();
+        messageFile.reload();
+
         Options.load(getConfig());
         getItemManager().load(this, getConfig());
     }
 
-    public IBlockManager getBlockManager() {
+    public BlockManager getBlockManager() {
         return blockManager;
     }
 
@@ -82,6 +89,16 @@ public final class SimpleBlockFreeze extends JavaPlugin {
 
     public FlagManager getFlagManager() {
         return flagManager;
+    }
+
+    private void registerCommands() {
+        getCommand("sbfadmin").setExecutor(new AdminCommand(this));
+    }
+
+    private void registerListeners() {
+        final PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new PlayerInteractListener(this), this);
+        pm.registerEvents(new BlockChangeListeners(this), this);
     }
 
     /**
@@ -99,15 +116,5 @@ public final class SimpleBlockFreeze extends JavaPlugin {
                 PluginLogger.warn("https://www.spigotmc.org/resources/odailyquests.100990/");
             }
         });
-    }
-
-    /**
-     * Initialize the storage manager depending on the storage mode.
-     */
-    private void loadBlockManager() {
-        final String literal = getConfig().getString("storage_mode");
-        final StorageMode mode = StorageMode.find(literal, StorageMode.INTERNAL);
-        this.blockManager = mode.createBlockManager(this);
-        getBlockManager().init();
     }
 }

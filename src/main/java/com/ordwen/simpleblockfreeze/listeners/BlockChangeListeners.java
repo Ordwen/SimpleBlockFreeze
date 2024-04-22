@@ -33,7 +33,7 @@ public class BlockChangeListeners implements Listener {
 
         if (world == null) return false;
 
-        return plugin.getBlockManager().searchLocation(world, block.getX(), block.getY(), block.getZ()).join(); // TODO: Change this
+        return plugin.getBlockManager().isFreezeBlock(block);
     }
 
     @EventHandler(ignoreCancelled = true)
