@@ -10,6 +10,7 @@ import com.ordwen.simpleblockfreeze.tools.PluginLogger;
 import com.ordwen.simpleblockfreeze.tools.UpdateChecker;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.IOException;
 
@@ -20,6 +21,8 @@ public final class SimpleBlockFreeze extends JavaPlugin {
     private final FlagManager flagManager;
 
     private BukkitConfigFile messageFile;
+
+    private BukkitTask saveTask;
 
     public SimpleBlockFreeze() {
         this.itemManager = new ItemManager();
@@ -38,6 +41,8 @@ public final class SimpleBlockFreeze extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        this.saveTask = SaveTask.runFor(this);
 
         /* register commands */
         registerCommands();
