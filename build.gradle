@@ -29,10 +29,6 @@ repositories {
 dependencies {
     compileOnly "org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT"
 
-    /* database management */
-    compileOnly 'com.zaxxer:HikariCP:5.0.1'
-    compileOnly 'com.h2database:h2:2.1.214'
-
     /* custom items */
     compileOnly 'com.github.oraxen:oraxen:1.157.0'
     compileOnly 'com.github.LoneDev6:API-ItemsAdder:3.5.0b'
@@ -40,6 +36,9 @@ dependencies {
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.9'
 
     implementation 'org.jetbrains:annotations:24.1.0'
+
+    implementation 'com.github.Revxrsal.Lamp:common:3.2.1'
+    implementation 'com.github.Revxrsal.Lamp:bukkit:3.2.1'
 }
 
 def targetJavaVersion = 17

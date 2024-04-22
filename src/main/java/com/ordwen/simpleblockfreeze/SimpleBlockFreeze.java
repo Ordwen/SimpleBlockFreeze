@@ -1,7 +1,8 @@
 package com.ordwen.simpleblockfreeze;
 
 import com.ordwen.simpleblockfreeze.block.BlockManager;
-import com.ordwen.simpleblockfreeze.commands.AdminCommand;
+import com.ordwen.simpleblockfreeze.commands.SBFCommand;
+import com.ordwen.simpleblockfreeze.commands.SBFCommandExceptionHandler;
 import com.ordwen.simpleblockfreeze.flag.FlagManager;
 import com.ordwen.simpleblockfreeze.item.ItemManager;
 import com.ordwen.simpleblockfreeze.listeners.BlockChangeListeners;
@@ -11,6 +12,7 @@ import com.ordwen.simpleblockfreeze.tools.UpdateChecker;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import revxrsal.commands.bukkit.BukkitCommandHandler;
 
 import java.io.IOException;
 
@@ -92,7 +94,9 @@ public final class SimpleBlockFreeze extends JavaPlugin {
     }
 
     private void registerCommands() {
-        getCommand("sbfadmin").setExecutor(new AdminCommand(this));
+        final BukkitCommandHandler handler = BukkitCommandHandler.create(this);
+        handler.setExceptionHandler(new SBFCommandExceptionHandler());
+        handler.register(new SBFCommand(this));
     }
 
     private void registerListeners() {
