@@ -17,6 +17,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 public class BlockManager {
 
@@ -87,5 +88,15 @@ public class BlockManager {
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             gson.toJson(array, writer);
         }
+    }
+
+    public CompletableFuture<Void> saveAsync() {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                save();
+            } catch (IOException exception) {
+                throw new RuntimeException(exception);
+            }
+        });
     }
 }

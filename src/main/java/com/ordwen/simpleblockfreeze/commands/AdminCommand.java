@@ -3,6 +3,7 @@ package com.ordwen.simpleblockfreeze.commands;
 import com.ordwen.simpleblockfreeze.SimpleBlockFreeze;
 import com.ordwen.simpleblockfreeze.enums.Messages;
 import com.ordwen.simpleblockfreeze.enums.Permissions;
+import com.ordwen.simpleblockfreeze.tools.PluginLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -28,6 +29,19 @@ public class AdminCommand extends CommandMessages implements CommandExecutor {
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
             plugin.onReload();
             Messages.CONFIG_RELOADED.send(sender);
+            return true;
+        }
+
+        if(args.length == 11 && args[0].equalsIgnoreCase("forcesave")) {
+
+            plugin.getBlockManager().saveAsync().thenAccept(ignored -> {
+                Messages.CONFIG_RELOADED.send(sender);
+            }).exceptionally(throwable -> {
+                PluginLogger.error("An error occurred while saving block(s).", throwable);
+                Messages.ERROR_OCCURRED.send(sender);
+                return null;
+            });
+
             return true;
         }
 
