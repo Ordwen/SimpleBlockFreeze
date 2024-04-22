@@ -19,6 +19,8 @@ public final class SimpleBlockFreeze extends JavaPlugin {
     private final ItemManager itemManager;
     private final FlagManager flagManager;
 
+    private BukkitConfigFile messageFile;
+
     public SimpleBlockFreeze() {
         this.itemManager = new ItemManager();
         this.blockManager = new BlockManager(this);
@@ -48,6 +50,9 @@ public final class SimpleBlockFreeze extends JavaPlugin {
         } catch (IOException exception) {
             PluginLogger.error("An error occurred while loading blocks.", exception);
         }
+
+        this.messageFile = new BukkitConfigFile(getDataFolder(), "messages.yml", this);
+        this.messageFile.setup();
     }
 
     @Override
@@ -63,6 +68,8 @@ public final class SimpleBlockFreeze extends JavaPlugin {
 
     public void onReload() {
         reloadConfig();
+        messageFile.reload();
+
         Options.load(getConfig());
         getItemManager().load(this, getConfig());
     }
