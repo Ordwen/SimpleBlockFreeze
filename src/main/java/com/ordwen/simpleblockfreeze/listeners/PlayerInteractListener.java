@@ -52,15 +52,35 @@ public class PlayerInteractListener implements Listener {
         final Action action = event.getAction();
 
         if (action == Action.RIGHT_CLICK_BLOCK) {
-            unfreeze(player, world, block);
+            unfreeze(player, block);
         } else if (action == Action.LEFT_CLICK_BLOCK) {
-            freeze(player, world, block);
+            freeze(player, block);
         }
     }
 
-    private void unfreeze(Player player, World world, Block block) {
+    private void unfreeze(Player player, Block block) {
+
+        final boolean store = plugin.getBlockManager().isFreezeBlock(block);
+
+        if(!store) {
+            Messages.FREEZE_NOT_FOUND.send(player);
+            return;
+        }
+
+        plugin.getBlockManager().unfreezeBlock(block);
+        Messages.UNFREEZE_SUCCESS.send(player);
     }
 
-    private void freeze(Player player, World world, Block block) {
+    private void freeze(Player player, Block block) {
+
+        final boolean store = plugin.getBlockManager().isFreezeBlock(block);
+
+        if(store) {
+            Messages.ALREADY_FROZEN.send(player);
+            return;
+        }
+
+        plugin.getBlockManager().freezeBlock(block);
+        Messages.FREEZE_SUCCESS.send(player);
     }
 }
