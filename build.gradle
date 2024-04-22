@@ -40,7 +40,6 @@ dependencies {
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.9'
 
     implementation 'org.jetbrains:annotations:24.1.0'
-    implementation 'com.jeff-media:custom-block-data:2.2.2'
 }
 
 def targetJavaVersion = 17
