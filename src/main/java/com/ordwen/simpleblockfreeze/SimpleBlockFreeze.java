@@ -1,14 +1,12 @@
 package com.ordwen.simpleblockfreeze;
 
 import com.ordwen.simpleblockfreeze.commands.AdminCommand;
-import com.ordwen.simpleblockfreeze.configuration.MessagesFile;
 import com.ordwen.simpleblockfreeze.flag.FlagManager;
 import com.ordwen.simpleblockfreeze.storage.StorageMode;
 import com.ordwen.simpleblockfreeze.item.ItemManager;
 import com.ordwen.simpleblockfreeze.listeners.BlockChangeListeners;
 import com.ordwen.simpleblockfreeze.listeners.PlayerInteractListener;
 import com.ordwen.simpleblockfreeze.storage.IBlockManager;
-import com.ordwen.simpleblockfreeze.tools.AutoUpdater;
 import com.ordwen.simpleblockfreeze.tools.PluginLogger;
 import com.ordwen.simpleblockfreeze.tools.UpdateChecker;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -41,8 +39,6 @@ public final class SimpleBlockFreeze extends JavaPlugin {
         //int pluginId = 1234;
         //final Metrics metrics = new Metrics(this, pluginId);
 
-        /* Check for updates */
-        new AutoUpdater(this).checkForUpdate();
         //checkForSpigotUpdate();
 
         /* init files */

@@ -59,50 +59,8 @@ public class PlayerInteractListener implements Listener {
     }
 
     private void unfreeze(Player player, World world, Block block) {
-
-        final int x = block.getX();
-        final int y = block.getY();
-        final int z = block.getZ();
-
-        final boolean store = plugin.getBlockManager().searchLocation(world, x, y, z).join(); // TODO: Change this
-
-        if(!store) {
-            Messages.FREEZE_NOT_FOUND.send(player);
-            return;
-        }
-
-        plugin.getBlockManager().deleteLocation(world, x, y, z)
-                .thenRun(() -> {
-                    Messages.UNFREEZE_SUCCESS.send(player);
-                }).exceptionally(exception -> {
-                    PluginLogger.error("An error occurred while deleting a block location in the database.");
-                    PluginLogger.error(exception.getMessage());
-                    Messages.ERROR_OCCURRED.send(player);
-                    return null;
-                });
     }
 
     private void freeze(Player player, World world, Block block) {
-
-        final int x = block.getX();
-        final int y = block.getY();
-        final int z = block.getZ();
-
-        final boolean store = plugin.getBlockManager().searchLocation(world, x, y, z).join(); // TODO: Change this
-
-        if(store) {
-            Messages.ALREADY_FROZEN.send(player);
-            return;
-        }
-
-        plugin.getBlockManager().deleteLocation(world, x, y, z)
-                .thenRun(() -> {
-                    Messages.FREEZE_SUCCESS.send(player);
-                }).exceptionally(exception -> {
-                    PluginLogger.error("An error occurred while saving a block location in the database.");
-                    PluginLogger.error(exception.getMessage());
-                    Messages.ERROR_OCCURRED.send(player);
-                    return null;
-                });
     }
 }

@@ -1,5 +1,6 @@
 package com.ordwen.simpleblockfreeze.tools;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PluginLogger {
@@ -11,15 +12,15 @@ public class PluginLogger {
     private static final Logger logger = org.bukkit.plugin.PluginLogger.getLogger("SimpleBlockFreeze");
 
     public static void info(String msg) {
-        logger.info(msg);
+        logger.log(Level.INFO, msg);
     }
 
     public static void warn(String msg) {
         logger.warning(msg);
     }
 
-    public static void error(String msg) {
-        logger.severe(msg);
+    public static void error(String msg, Throwable exception) {
+        logger.log(Level.SEVERE, msg, exception);
     }
 
     public static void fine(String msg) {
@@ -33,14 +34,14 @@ public class PluginLogger {
      * @param reason     the reason of the error
      */
     public static void configurationError(String parameter, String reason) {
-        PluginLogger.error("-----------------------------------");
-        PluginLogger.error("Invalid configuration detected.");
-        PluginLogger.error("Reason : " + reason);
+        PluginLogger.warn("-----------------------------------");
+        PluginLogger.warn("Invalid configuration detected.");
+        PluginLogger.warn("Reason : " + reason);
 
         if (parameter != null) {
-            PluginLogger.error("Parameter : " + parameter);
+            PluginLogger.warn("Parameter : " + parameter);
         }
 
-        PluginLogger.error("-----------------------------------");
+        PluginLogger.warn("-----------------------------------");
     }
 }
