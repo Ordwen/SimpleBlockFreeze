@@ -8,7 +8,10 @@ import com.ordwen.simpleblockfreeze.listeners.BlockChangeListeners;
 import com.ordwen.simpleblockfreeze.listeners.PlayerInteractListener;
 import com.ordwen.simpleblockfreeze.tools.PluginLogger;
 import com.ordwen.simpleblockfreeze.tools.UpdateChecker;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.IOException;
 
 public final class SimpleBlockFreeze extends JavaPlugin {
 
@@ -22,7 +25,7 @@ public final class SimpleBlockFreeze extends JavaPlugin {
         this.flagManager = new FlagManager(this);
     }
 
-    public static SimpleBlockFreeze getInstance() {
+    public static SimpleBlockFreeze instance() {
         return JavaPlugin.getPlugin(SimpleBlockFreeze.class);
     }
 
@@ -35,15 +38,28 @@ public final class SimpleBlockFreeze extends JavaPlugin {
     public void onEnable() {
 
         /* register commands */
-        getCommand("sbfadmin").setExecutor(new AdminCommand(this));
+        registerCommands();
 
         /* register events */
-        getServer().getPluginManager().registerEvents(new PlayerInteractListener(this), this);
-        getServer().getPluginManager().registerEvents(new BlockChangeListeners(this), this);
+        registerListeners();
+
+        try {
+            getBlockManager().load();
+        } catch (IOException exception) {
+            PluginLogger.error("An error occurred while loading blocks.", exception);
+        }
     }
 
     @Override
-    public void onDisable() { }
+    public void onDisable() {
+
+        try {
+            getBlockManager().save();
+        } catch (IOException exception) {
+            PluginLogger.error("An error occurred while saving blocks.", exception);
+        }
+
+    }
 
     public void onReload() {
         reloadConfig();
@@ -61,6 +77,16 @@ public final class SimpleBlockFreeze extends JavaPlugin {
 
     public FlagManager getFlagManager() {
         return flagManager;
+    }
+
+    private void registerCommands() {
+        getCommand("sbfadmin").setExecutor(new AdminCommand(this));
+    }
+
+    private void registerListeners() {
+        final PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new PlayerInteractListener(this), this);
+        pm.registerEvents(new BlockChangeListeners(this), this);
     }
 
     /**
