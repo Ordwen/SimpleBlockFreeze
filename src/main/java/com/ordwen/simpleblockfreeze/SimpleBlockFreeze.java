@@ -8,7 +8,6 @@ import com.ordwen.simpleblockfreeze.flag.FlagManager;
 import com.ordwen.simpleblockfreeze.item.ItemManager;
 import com.ordwen.simpleblockfreeze.listeners.BlockChangeListeners;
 import com.ordwen.simpleblockfreeze.listeners.PlayerInteractListener;
-import com.ordwen.simpleblockfreeze.task.IndividualParticleTask;
 import com.ordwen.simpleblockfreeze.task.SaveTask;
 import com.ordwen.simpleblockfreeze.task.ShowParticleTask;
 import com.ordwen.simpleblockfreeze.tools.PluginLogger;
@@ -84,18 +83,6 @@ public final class SimpleBlockFreeze extends JavaPlugin {
 
         Options.load(getConfig());
         getItemManager().load(this, getConfig());
-        initParticles();
-    }
-
-    private void initParticles() {
-        final ConfigurationSection section = getConfig().getConfigurationSection("particles");
-        if (section == null) {
-            PluginLogger.warn("No particles section found in the config.");
-            return;
-        }
-
-        ShowParticleTask.init(section);
-        IndividualParticleTask.init(section);
     }
 
     public BlockManager getBlockManager() {

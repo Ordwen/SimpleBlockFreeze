@@ -1,8 +1,10 @@
 package com.ordwen.simpleblockfreeze.task;
 
+import com.ordwen.simpleblockfreeze.Options;
 import com.ordwen.simpleblockfreeze.SimpleBlockFreeze;
 import com.ordwen.simpleblockfreeze.enums.ParticleType;
 import com.ordwen.simpleblockfreeze.tools.EnumUtils;
+import com.ordwen.simpleblockfreeze.tools.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -18,25 +20,12 @@ public class IndividualParticleTask extends BukkitRunnable {
 
     private static final int INTERVAL = 10;
 
-    private static Particle freezeParticle;
-    private static Particle unfreezeParticle;
-
-    private static Color freezeColor;
-    private static Color unfreezeColor;
-
     private final ParticleType type;
 
     private final SimpleBlockFreeze plugin;
     private final UUID uuid;
     private final Location location;
     private int numberOfLoop;
-
-    public static void init(ConfigurationSection section) {
-        freezeParticle = EnumUtils.verifyParticle(section.getString("freeze.type"));
-        freezeColor = EnumUtils.verifyColor(section.getString("freeze.color"));
-        unfreezeParticle = EnumUtils.verifyParticle(section.getString("unfreeze.type"));
-        unfreezeColor = EnumUtils.verifyColor(section.getString("unfreeze.color"));
-    }
 
     public static BukkitTask runFor(Player player, Location location, int seconds, ParticleType type) {
         return new IndividualParticleTask(SimpleBlockFreeze.instance(), player.getUniqueId(), location, seconds, type).runTaskTimer(
@@ -70,21 +59,35 @@ public class IndividualParticleTask extends BukkitRunnable {
 
         --numberOfLoop;
 
-        switch (type) {
-            case FREEZE -> spawnParticle(player, location, freezeParticle, freezeColor);
-            case UNFREEZE -> spawnParticle(player, location, unfreezeParticle, unfreezeColor);
-        }
+        spawnParticle(player, location);
     }
 
-    private void spawnParticle(Player player, Location location, Particle particle, Color color) {
-        player.spawnParticle(
-                particle,
-                location,
-                4,
-                0.4,
-                0.4,
-                0.4,
-                new Particle.DustOptions(color, 1.2f)
-        );
+    private void spawnParticle(Player player, Location location) {
+
+        final Pair<Particle, Color> particleOptions = Options.PARTICLES.get(type);
+
+        final Particle particle = particleOptions.getFst();
+        final Color color = particleOptions.getSnd();
+
+        if(color != null) {
+            player.spawnParticle(
+                    particle,
+                    location,
+                    4,
+                    0.4,
+                    0.4,
+                    0.4,
+                    new Particle.DustOptions(particleOptions.getSnd(), 1.2f)
+            );
+        } else {
+            player.spawnParticle(
+                    particle,
+                    location,
+                    4,
+                    0.4,
+                    0.4,
+                    0.4
+            );
+        }
     }
 }
