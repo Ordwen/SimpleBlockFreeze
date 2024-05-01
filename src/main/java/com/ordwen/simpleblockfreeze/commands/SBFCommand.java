@@ -2,7 +2,8 @@ package com.ordwen.simpleblockfreeze.commands;
 
 import com.ordwen.simpleblockfreeze.SimpleBlockFreeze;
 import com.ordwen.simpleblockfreeze.enums.Messages;
-import com.ordwen.simpleblockfreeze.task.ParticleTask;
+import com.ordwen.simpleblockfreeze.enums.ParticleType;
+import com.ordwen.simpleblockfreeze.task.ShowParticleTask;
 import com.ordwen.simpleblockfreeze.tools.PluginLogger;
 import org.bukkit.entity.Player;
 import revxrsal.commands.annotation.*;
@@ -57,6 +58,6 @@ public class SBFCommand {
     @CommandPermission("simpleblockfreeze.command.show")
     public void onShow(BukkitCommandActor actor, @Range(min = 0) @Default(value = "5") int seconds, @Optional Player player) {
         final Player target = player != null ? player : actor.requirePlayer();
-        ParticleTask.runFor(target, seconds);
+        ShowParticleTask.runFor(target, seconds);
     }
 }

@@ -2,8 +2,10 @@ package com.ordwen.simpleblockfreeze.listeners;
 
 import com.ordwen.simpleblockfreeze.SimpleBlockFreeze;
 import com.ordwen.simpleblockfreeze.enums.Messages;
+import com.ordwen.simpleblockfreeze.enums.ParticleType;
 import com.ordwen.simpleblockfreeze.enums.Permissions;
 import com.ordwen.simpleblockfreeze.flag.FlagType;
+import com.ordwen.simpleblockfreeze.task.IndividualParticleTask;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -67,6 +69,7 @@ public class PlayerInteractListener implements Listener {
         }
 
         plugin.getBlockManager().unfreezeBlock(block);
+        IndividualParticleTask.runFor(player, block.getLocation(), 1, ParticleType.UNFREEZE);
         Messages.UNFREEZE_SUCCESS.send(player);
     }
 
@@ -78,6 +81,7 @@ public class PlayerInteractListener implements Listener {
         }
 
         plugin.getBlockManager().freezeBlock(block);
+        IndividualParticleTask.runFor(player, block.getLocation(), 1, ParticleType.FREEZE);
         Messages.FREEZE_SUCCESS.send(player);
     }
 }

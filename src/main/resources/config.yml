@@ -9,6 +9,22 @@ item:
       - "&7Right click to freeze."
       - "&7Left click to unfreeze."
 
+# Here you can configure the particles that will be displayed when the block is frozen or unfrozen.
+# You can choose the type of particle and its color.
+#
+# Available types: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
+# Available colors: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/DyeColor.html
+particles:
+  show:
+    type: REDSTONE
+    color: YELLOW
+  freeze:
+    type: REDSTONE
+    color: GREEN
+  unfreeze:
+    type: REDSTONE
+    color: RED
+
 # In this list, you can add all the types of block that continue to grow even after being frozen.
 # Because of the Bukkit API, it is not possible to recover the source.
 #
