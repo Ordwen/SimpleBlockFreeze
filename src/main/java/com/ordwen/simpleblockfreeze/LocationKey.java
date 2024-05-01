@@ -27,7 +27,7 @@ public class LocationKey {
         this(
                 location.getWorld().getName(),
                 location.getBlockX(),
-                location.getBlockX(),
+                location.getBlockY(),
                 location.getBlockZ()
         );
     }
@@ -57,12 +57,12 @@ public class LocationKey {
 
     @Override
     public boolean equals(Object object) {
-
-        if(object == this) {
+        if (object == this) {
             return true;
         }
 
-        if(!(object instanceof LocationKey otherKey)) {
+        if (!(object instanceof LocationKey otherKey)) {
+            System.out.println("otherKey is not an instance of LocationKey");
             return false;
         }
 
@@ -70,5 +70,10 @@ public class LocationKey {
                 Objects.equals(otherKey.X, X) &&
                 Objects.equals(otherKey.Y, Y) &&
                 Objects.equals(otherKey.Z, Z);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(worldName, X, Y, Z);
     }
 }

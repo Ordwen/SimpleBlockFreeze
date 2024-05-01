@@ -4,7 +4,6 @@ import com.ordwen.simpleblockfreeze.SimpleBlockFreeze;
 import com.ordwen.simpleblockfreeze.enums.Messages;
 import com.ordwen.simpleblockfreeze.enums.Permissions;
 import com.ordwen.simpleblockfreeze.flag.FlagType;
-import com.ordwen.simpleblockfreeze.tools.PluginLogger;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -44,7 +43,7 @@ public class PlayerInteractListener implements Listener {
         final World world = location.getWorld();
         if (world == null) return;
 
-        if(!plugin.getFlagManager().test(FlagType.FREEZE_BLOCK, player, location)) {
+        if (!plugin.getFlagManager().test(FlagType.FREEZE_BLOCK, player, location)) {
             Messages.UNAUTHORIZED_REGION.send(player);
             return;
         }
@@ -62,7 +61,7 @@ public class PlayerInteractListener implements Listener {
 
         final boolean store = plugin.getBlockManager().isFreezeBlock(block);
 
-        if(!store) {
+        if (!store) {
             Messages.FREEZE_NOT_FOUND.send(player);
             return;
         }
@@ -72,10 +71,8 @@ public class PlayerInteractListener implements Listener {
     }
 
     private void freeze(Player player, Block block) {
-
         final boolean store = plugin.getBlockManager().isFreezeBlock(block);
-
-        if(store) {
+        if (store) {
             Messages.ALREADY_FROZEN.send(player);
             return;
         }

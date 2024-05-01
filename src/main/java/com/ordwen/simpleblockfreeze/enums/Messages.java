@@ -1,6 +1,5 @@
 package com.ordwen.simpleblockfreeze.enums;
 
-import com.ordwen.simpleblockfreeze.BukkitConfigFile;
 import com.ordwen.simpleblockfreeze.tools.ColorConvert;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -27,7 +26,7 @@ public enum Messages {
 
     private final String path;
     private final String defaultMessage;
-    private static BukkitConfigFile lang;
+    private static FileConfiguration lang;
 
     /**
      * Message constructor.
@@ -44,7 +43,7 @@ public enum Messages {
      *
      * @param messagesFile the config to set.
      */
-    public static void setFile(BukkitConfigFile messagesFile) {
+    public static void setFile(FileConfiguration messagesFile) {
         lang = messagesFile;
     }
 
@@ -55,7 +54,7 @@ public enum Messages {
      */
     @Override
     public String toString() {
-        String msg = lang.getConfiguration().getString(this.path, defaultMessage);
+        String msg = lang.getString(this.path, defaultMessage);
 
         if (msg.trim().isEmpty()) return "";
         else return ColorConvert.convertColorCode(msg);

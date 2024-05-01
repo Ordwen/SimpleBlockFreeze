@@ -6,13 +6,3 @@ prefix: "SimpleBlockFreeze"
 authors: [ Ordwen ]
 description: "Freeze the state of any block/plant on your server."
 softdepend: [ WorldGuard ]
-libraries:
-  - com.zaxxer:HikariCP:5.1.0
-  - com.h2database:h2:2.2.224
-commands:
-  sbfadmin:
-    description: "Admin command for SimpleBlockFreeze."
-    usage: "/sbfadmin <give|reload>"
-    permission: "simpleblockfreeze.admin"
-    aliases:
-      - sbfa

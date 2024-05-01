@@ -102,7 +102,7 @@ public class ItemManager {
             meta.setCustomModelData(customModelData);
         }
 
-        stack.setItemMeta(meta);
+        itemStack.setItemMeta(meta);
         return itemStack;
     }
 }

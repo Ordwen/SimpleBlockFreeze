@@ -3,6 +3,7 @@ package com.ordwen.simpleblockfreeze;
 import com.ordwen.simpleblockfreeze.block.BlockManager;
 import com.ordwen.simpleblockfreeze.commands.SBFCommand;
 import com.ordwen.simpleblockfreeze.commands.SBFCommandExceptionHandler;
+import com.ordwen.simpleblockfreeze.files.MessagesFile;
 import com.ordwen.simpleblockfreeze.flag.FlagManager;
 import com.ordwen.simpleblockfreeze.item.ItemManager;
 import com.ordwen.simpleblockfreeze.listeners.BlockChangeListeners;
@@ -23,7 +24,7 @@ public final class SimpleBlockFreeze extends JavaPlugin {
     private final ItemManager itemManager;
     private final FlagManager flagManager;
 
-    private BukkitConfigFile messageFile;
+    private MessagesFile messageFile;
 
     private BukkitTask saveTask;
 
@@ -59,24 +60,24 @@ public final class SimpleBlockFreeze extends JavaPlugin {
             PluginLogger.error("An error occurred while loading blocks.", exception);
         }
 
-        this.messageFile = new BukkitConfigFile(getDataFolder(), "messages.yml", this);
+        this.messageFile = new MessagesFile(this);
         this.messageFile.setup();
+
+        onReload();
     }
 
     @Override
     public void onDisable() {
-
         try {
             getBlockManager().save();
         } catch (IOException exception) {
             PluginLogger.error("An error occurred while saving blocks.", exception);
         }
-
     }
 
     public void onReload() {
         reloadConfig();
-        messageFile.reload();
+        this.messageFile.reload();
 
         Options.load(getConfig());
         getItemManager().load(this, getConfig());

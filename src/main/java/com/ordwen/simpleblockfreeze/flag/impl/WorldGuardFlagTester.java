@@ -37,7 +37,7 @@ public class WorldGuardFlagTester implements FlagTester {
                 registry.register(flag);
                 flags.put(type, flag);
             } catch (FlagConflictException exception) {
-                PluginLogger.error("An error occurred while registering flag " + type + " for WorldGuard.");
+                PluginLogger.error("An error occurred while registering flag " + type + " for WorldGuard.", exception);
             }
         }
     }
