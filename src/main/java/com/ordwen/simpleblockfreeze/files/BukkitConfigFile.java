@@ -1,4 +1,4 @@
-package com.ordwen.simpleblockfreeze;
+package com.ordwen.simpleblockfreeze.files;
 
 import com.ordwen.simpleblockfreeze.tools.PluginLogger;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,24 +28,22 @@ public class BukkitConfigFile {
 
     public BukkitConfigFile(File folder, String fileName, JavaPlugin plugin) {
         if (!folder.exists()) folder.mkdirs();
-        this.filePath = new File(folder, fileName).getPath();
+        this.filePath = fileName;
         this.plugin = plugin;
     }
 
     public void setup() {
-
-        if(file == null) {
+        if (file == null) {
             this.file = new File(plugin.getDataFolder(), filePath);
         }
 
-        if(!file.exists()) {
+        if (!file.exists()) {
             this.plugin.saveResource(filePath, false);
         }
     }
 
     public void save() throws IOException {
-
-        if(file == null || configuration == null) {
+        if (file == null || configuration == null) {
             return;
         }
 
@@ -53,8 +51,7 @@ public class BukkitConfigFile {
     }
 
     public YamlConfiguration getConfiguration() {
-
-        if(this.configuration == null) {
+        if (this.configuration == null) {
             reload();
         }
 
@@ -62,15 +59,14 @@ public class BukkitConfigFile {
     }
 
     public void reload() {
-
-        if(this.file == null) {
+        if (this.file == null) {
             file = new File(plugin.getDataFolder(), filePath);
         }
 
         this.configuration = YamlConfiguration.loadConfiguration(this.file);
         final InputStream defaultStream = plugin.getResource(filePath);
 
-        if(defaultStream != null) {
+        if (defaultStream != null) {
             try (InputStreamReader reader = new InputStreamReader(defaultStream)) {
                 YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(reader);
                 this.configuration.setDefaults(defaultConfig);
@@ -85,8 +81,7 @@ public class BukkitConfigFile {
     }
 
     public void updateConfig(List<String> ignoredPaths) {
-
-        if(!this.file.exists()) {
+        if (!this.file.exists()) {
             setup();
             return;
         }
@@ -94,14 +89,14 @@ public class BukkitConfigFile {
         final YamlConfiguration configuration = this.getConfiguration();
         InputStream defaultFileStream = plugin.getResource(this.filePath);
 
-        if(defaultFileStream == null) {
+        if (defaultFileStream == null) {
             return;
         }
 
         final YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultFileStream));
         final boolean modified = this.mergeConfigs(defaultConfig, configuration, ignoredPaths);
 
-        if(modified) {
+        if (modified) {
             try {
                 save();
                 plugin.getLogger().info("File " + filePath + " has been updated to newest version.");
@@ -117,8 +112,8 @@ public class BukkitConfigFile {
         keyLoop:
         for (String key : source.getKeys(true)) {
 
-            for(String ignored : ignoredPaths) {
-                if(key.startsWith(ignored)) {
+            for (String ignored : ignoredPaths) {
+                if (key.startsWith(ignored)) {
                     continue keyLoop;
                 }
             }
