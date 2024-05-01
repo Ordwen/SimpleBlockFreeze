@@ -1,18 +1,5 @@
 version: 0.0.1-BETA
 
-# storage mode for quests & progression
-# AVAILABLE MODES: MySQL,H2
-# RECOMMENDED: H2
-storage_mode: "H2"
-
-# MySQL Database Connection
-database:
-  name: "MyDatabase"   # Database name
-  host: "127.0.0.1"    # Database host
-  user: "admin"        # Database user
-  password: "1234"     # Database password
-  port: "3306"         # Database port
-
 # Configure the item used to freeze/unfreeze the block.
 item:
   material: HONEYCOMB
