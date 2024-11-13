@@ -44,6 +44,7 @@ public final class SimpleBlockFreeze extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
 
         this.saveTask = SaveTask.runFor(this);
 

@@ -51,7 +51,7 @@ public class SBFCommand {
     public void onGive(BukkitCommandActor actor, @Optional Player player) {
         final Player target = player != null ? player : actor.requirePlayer();
 
-        target.getInventory().addItem(plugin.getItemManager().getItemStack());
+        target.getInventory().addItem(plugin.getItemManager().getItemStack().clone());
         Messages.ITEM_GIVEN.send(actor.getSender());
     }
 }

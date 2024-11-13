@@ -24,5 +24,15 @@ disabled_worlds:
   - "world_nether"
   - "world_the_end"
 
+# Set the durability of the block freezer. The higher the value, the more uses the player will have.
+# You can define as many durability levels as you want. If you want an infinite durability, set the value to -1.
+#
+# To be active, the player must have the permission "simpleblockfreeze.durability.<level>". For example, "simpleblockfreeze.durability.vip".
+# If the player does not have any permission, the durability will be the vanilla item durability (infinite if the item is not damaged).
+durability:
+  player: 10
+  vip: 20
+  legend: -1
+
 # If enabled, the player will not be able to use the block freezer in a worldguard region.
 use_worldguard: false

@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 public class BlockChangeListeners implements Listener {
 
@@ -93,6 +94,59 @@ public class BlockChangeListeners implements Listener {
     public void onFluidFlow(BlockFromToEvent event) {
         if (isBlockFrozen(event.getToBlock())) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockBurn(BlockBurnEvent event) {
+        if (isBlockFrozen(event.getBlock())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockIgnite(BlockIgniteEvent event) {
+        if (isBlockFrozen(event.getBlock())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockPistonExtend(BlockPistonExtendEvent event) {
+        for (Block block : event.getBlocks()) {
+            if (isBlockFrozen(block)) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockPistonRetract(BlockPistonRetractEvent event) {
+        for (Block block : event.getBlocks()) {
+            if (isBlockFrozen(block)) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockExplode(BlockExplodeEvent event) {
+        for (Block block : event.blockList()) {
+            if (isBlockFrozen(block)) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPhysicalInteract(PlayerInteractEvent event) {
+        if (event.getAction() == Action.PHYSICAL) {
+            if (isBlockFrozen(event.getClickedBlock())) {
+                event.setCancelled(true);
+            }
         }
     }
 }

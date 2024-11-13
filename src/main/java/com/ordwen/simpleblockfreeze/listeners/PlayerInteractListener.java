@@ -26,7 +26,7 @@ public class PlayerInteractListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         final ItemStack item = event.getItem();
         if (item == null) return;
-        if (!plugin.getItemManager().similar(item)) return;
+        if (!plugin.getItemManager().isFreezeItem(item)) return;
 
         event.setCancelled(true);
         final Player player = event.getPlayer();
